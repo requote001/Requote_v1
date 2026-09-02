@@ -1,0 +1,40 @@
+:root {
+  color: #000820;
+  background: #ffffff;
+  font-family: "Hanken Grotesk", "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --font-heading: "Hanken Grotesk", "Segoe UI", sans-serif;
+  --font-ui: "Plus Jakarta Sans", "Segoe UI", sans-serif;
+  --ink: #000820;
+  --navy: #12203d;
+  --blue: #1950d2;
+  --soft: #f7f9fd;
+  --body: #45464d;
+  --muted: #7b88aa;
+  --line: #e0e3e6;
+  --ember: #ff6a3d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+}
+
+button,
+a {
+  font: inherit;
+}
+
+img {
+  max-width: 100%;
+}

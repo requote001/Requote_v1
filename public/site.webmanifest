@@ -1,0 +1,25 @@
+{
+  "name": "Requote",
+  "short_name": "Requote",
+  "description": "Post requests, compare provider offers, and manage clearer, protected transactions.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F6F8FC",
+  "theme_color": "#12203D",
+  "lang": "en-NG",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

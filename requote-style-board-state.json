@@ -1,0 +1,25 @@
+{
+  "runId": "requote-style-board-2026-08-21",
+  "phase": "phase2",
+  "step": "style-board-created",
+  "fileKey": "DAcXJsJrn4HypOhE2ZAEPn",
+  "entities": {
+    "page": "31:2",
+    "board": "31:3",
+    "collections": {
+      "primitives": "VariableCollectionId:28:30",
+      "color": "VariableCollectionId:28:31",
+      "spacing": "VariableCollectionId:28:32"
+    }
+  },
+  "completedSteps": [
+    "phase0-discovery",
+    "phase1-color-spacing-foundations",
+    "phase1-typography-and-elevation",
+    "phase2-style-board-structure",
+    "phase2-style-board-content"
+  ],
+  "pendingValidations": [
+    "final-fidelity-screenshot-review-blocked-by-figma-starter-mcp-call-limit"
+  ]
+}
