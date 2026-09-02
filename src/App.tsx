@@ -511,7 +511,7 @@ function App() {
                 Respond to legitimate requests, agree on the details, and start
                 with payment already protected.
               </p>
-              <ul className="feature-list feature-list--ember">
+              <ul className="feature-list feature-list--provider">
                 <li>
                   <AssetIcon src="/figma/icon-07.svg" />
                   <span>
@@ -571,7 +571,7 @@ function App() {
                   documented outcome is confirmed.
                 </p>
               </article>
-              <article>
+              <article className="escrow-card--light-icon">
                 <AssetIcon src="/figma/icon-09.svg" />
                 <h3>Evidence-Based Disputes</h3>
                 <p>
@@ -579,7 +579,7 @@ function App() {
                   establish what happened.
                 </p>
               </article>
-              <article>
+              <article className="escrow-card--light-icon">
                 <AssetIcon src="/figma/icon-08.svg" />
                 <h3>Fair Outcomes</h3>
                 <p>
