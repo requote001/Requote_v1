@@ -3,20 +3,12 @@
   "project": {
     "name": "requote-project-v1",
     "productType": "request-and-offer marketplace",
-    "stack": [
-      "react",
-      "vite"
-    ]
+    "stack": ["react", "vite"]
   },
   "sources": {
-    "tokens": [
-      "src/index.css",
-      "src/app.css"
-    ],
+    "tokens": ["src/index.css", "src/app.css"],
     "components": [],
-    "assets": [
-      "src/assets"
-    ],
+    "assets": ["src/assets"],
     "instructions": []
   },
   "design": {
@@ -44,7 +36,8 @@
     "avoid": []
   },
   "decisions": [
-    "The public landing page follows Figma nodes 53:1403 (desktop) and 52:1212 (mobile), using Hanken Grotesk for editorial typography, Plus Jakarta Sans for UI text, #1950D2 for primary actions, #000820/#12203D for trust surfaces, and committed Figma-exported imagery and icons."
+    "The public landing page follows Figma nodes 53:1403 (desktop) and 52:1212 (mobile), using Hanken Grotesk for editorial typography, Plus Jakarta Sans for UI text, #1950D2 for primary actions, #000820/#12203D for trust surfaces, and committed Figma-exported imagery and icons.",
+    "Landing-page motion is intentionally restrained: only the hero offer stack, requester and provider mockups, typed request example, budget indicator, and user-initiated category image interactions animate; all motion is disabled when reduced motion is preferred."
   ],
   "evidence": [
     {

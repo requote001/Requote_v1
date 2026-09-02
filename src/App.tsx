@@ -1,4 +1,8 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 import "./App.css";
 
 const earlyAccessLink =
@@ -7,6 +11,79 @@ const requesterLink =
   "mailto:hello@requote.ng?subject=I%20want%20to%20post%20a%20request%20on%20Requote";
 const providerLink =
   "mailto:hello@requote.ng?subject=I%20want%20to%20join%20Requote%20as%20a%20provider";
+
+const requestExamples = [
+  "Commercial welding service",
+  "2,000 branded uniforms",
+  "Warehouse security system",
+  "Business website redesign",
+];
+
+function useTypingSequence(phrases: string[]) {
+  const [phraseIndex, setPhraseIndex] = useState(0);
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+  const [visibleLength, setVisibleLength] = useState(() =>
+    reduceMotion ? phrases[0].length : 0,
+  );
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const currentPhrase = phrases[phraseIndex];
+
+    if (reduceMotion) return;
+
+    const isComplete = visibleLength === currentPhrase.length;
+    const isEmpty = visibleLength === 0;
+    const delay = isDeleting ? (isEmpty ? 260 : 32) : isComplete ? 1600 : 58;
+
+    const timeout = window.setTimeout(() => {
+      if (!isDeleting && isComplete) {
+        setIsDeleting(true);
+        return;
+      }
+
+      if (isDeleting && isEmpty) {
+        setIsDeleting(false);
+        setPhraseIndex((index) => (index + 1) % phrases.length);
+        return;
+      }
+
+      setVisibleLength((length) => length + (isDeleting ? -1 : 1));
+    }, delay);
+
+    return () => window.clearTimeout(timeout);
+  }, [isDeleting, phraseIndex, phrases, reduceMotion, visibleLength]);
+
+  return phrases[phraseIndex].slice(0, visibleLength);
+}
+
+function moveDealVisual(event: ReactPointerEvent<HTMLDivElement>) {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const bounds = event.currentTarget.getBoundingClientRect();
+  const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 12;
+  const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 8;
+
+  event.currentTarget.style.setProperty("--pointer-x", `${x.toFixed(2)}px`);
+  event.currentTarget.style.setProperty("--pointer-y", `${y.toFixed(2)}px`);
+  event.currentTarget.style.setProperty(
+    "--back-x",
+    `${(-x * 0.45).toFixed(2)}px`,
+  );
+  event.currentTarget.style.setProperty(
+    "--back-y",
+    `${(-y * 0.45).toFixed(2)}px`,
+  );
+}
+
+function resetDealVisual(event: ReactPointerEvent<HTMLDivElement>) {
+  event.currentTarget.style.setProperty("--pointer-x", "0px");
+  event.currentTarget.style.setProperty("--pointer-y", "0px");
+  event.currentTarget.style.setProperty("--back-x", "0px");
+  event.currentTarget.style.setProperty("--back-y", "0px");
+}
 
 function AssetIcon({
   src,
@@ -113,6 +190,7 @@ const faqs = [
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const typedRequest = useTypingSequence(requestExamples);
   const currentYear = new Date().getFullYear();
   const closeMenu = () => setMenuOpen(false);
 
@@ -236,6 +314,8 @@ function App() {
               className="deal-visual"
               role="img"
               aria-label="An example provider offer protected by Requote escrow"
+              onPointerMove={moveDealVisual}
+              onPointerLeave={resetDealVisual}
             >
               <div className="deal-visual__skeleton" aria-hidden="true">
                 <span />
@@ -370,14 +450,22 @@ function App() {
                 Post your first request
               </a>
             </div>
-            <div className="request-ui" aria-label="Example request form">
+            <div
+              className="request-ui"
+              role="img"
+              aria-label="Example request form showing the kinds of services you can request on Requote"
+            >
               <div className="request-ui__toolbar">
                 <span>New request</span>
                 <small>Step 2 of 4</small>
               </div>
               <div className="request-ui__body">
                 <label>
-                  What do you need?<span>Commercial welding service</span>
+                  What do you need?
+                  <span className="request-ui__typed" aria-hidden="true">
+                    {typedRequest}
+                    <i className="request-ui__caret" />
+                  </span>
                 </label>
                 <label>
                   Delivery location<span>Lagos, Nigeria</span>
@@ -396,6 +484,7 @@ function App() {
           <div className="layout story__grid story__grid--reverse">
             <div
               className="provider-offer"
+              role="img"
               aria-label="Example accepted provider offer"
             >
               <div className="provider-offer__top">
