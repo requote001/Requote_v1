@@ -38,4 +38,4 @@ Before launch, connect a production authentication provider, database, file stor
 
 ## Environment
 
-Set `NEXT_PUBLIC_SITE_URL` to the production origin when it differs from `https://requote.ng`. This is used to generate canonical and social metadata.
+Set `NEXT_PUBLIC_SITE_URL` to the production origin when it differs from `https://requote.cc`. This is used to generate canonical and social metadata.

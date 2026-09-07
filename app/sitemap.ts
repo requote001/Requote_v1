@@ -10,7 +10,7 @@ const publicRoutes = [
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://requote.ng").replace(
+  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://requote.cc").replace(
     /\/$/,
     "",
   );
