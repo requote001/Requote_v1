@@ -1,16 +1,14 @@
+"use client";
+
 import {
   useEffect,
   useState,
   type PointerEvent as ReactPointerEvent,
 } from "react";
-import "./App.css";
 
-const earlyAccessLink =
-  "mailto:hello@requote.ng?subject=Requote%20early%20access";
-const requesterLink =
-  "mailto:hello@requote.ng?subject=I%20want%20to%20post%20a%20request%20on%20Requote";
-const providerLink =
-  "mailto:hello@requote.ng?subject=I%20want%20to%20join%20Requote%20as%20a%20provider";
+const earlyAccessLink = "/login";
+const requesterLink = "/post-a-request";
+const providerLink = "/create-account?role=provider";
 
 const requestExamples = [
   "Commercial welding service",
@@ -21,9 +19,9 @@ const requestExamples = [
 
 function useTypingSequence(phrases: string[]) {
   const [phraseIndex, setPhraseIndex] = useState(0);
-  const reduceMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)",
-  ).matches;
+  const reduceMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const [visibleLength, setVisibleLength] = useState(() =>
     reduceMotion ? phrases[0].length : 0,
   );
@@ -154,12 +152,13 @@ const categories = [
   ["Fabrication", "/figma/fabrication.jpg", "A fabrication workshop"],
   [
     "Skilled Trades",
-    "/figma/skilled-trades.jpg",
+    "/figma/digital-services.jpg",
+    
     "A skilled professional at work",
   ],
   [
     "Digital Services",
-    "/figma/digital-services.jpg",
+    "/figma/skilled-trades.jpg",
     "A digital services workspace",
   ],
 ];
@@ -239,7 +238,7 @@ function App() {
               <a className="text-button" href={earlyAccessLink}>
                 Log in
               </a>
-              <a className="button button--primary" href="#request">
+              <a className="button button--primary" href={requesterLink}>
                 Post a request
               </a>
             </div>
@@ -250,7 +249,7 @@ function App() {
             </a>
             <a
               className="button button--primary button--compact"
-              href="#request"
+              href={requesterLink}
             >
               Post a request
             </a>
@@ -297,7 +296,7 @@ function App() {
               <div className="hero__actions">
                 <a
                   className="button button--primary button--wide"
-                  href="#request"
+                  href={requesterLink}
                 >
                   Post a request
                   <AssetIcon src="/figma/arrow.svg" className="button__arrow" />
@@ -603,7 +602,7 @@ function App() {
             </div>
             <div className="categories__grid">
               {categories.map(([title, image, alt]) => (
-                <a className="category-tile" href="#request" key={title}>
+                <a className="category-tile" href={requesterLink} key={title}>
                   <img src={image} alt={alt} />
                   <span>{title}</span>
                 </a>
@@ -694,23 +693,24 @@ function App() {
             </div>
             <div className="footer__column">
               <strong>Product</strong>
-              <a href="#request">Post a Request</a>
+              <a href={requesterLink}>Post a Request</a>
               <a href="#providers">Become a Provider</a>
-              <a href="#how-it-works">How it Works</a>
+              <a href="/how-it-works">How it Works</a>
               <span>Pricing (TBA)</span>
             </div>
             <div className="footer__column">
               <strong>Trust &amp; Safety</strong>
-              <a href="#trust">Escrow Protection</a>
-              <a href="#faq">Dispute Resolution</a>
-              <a href="#providers">Provider Verification</a>
+              <a href="/trust-safety">Escrow Protection</a>
+              <a href="/trust-safety#disputes">Dispute Resolution</a>
+              <a href="/trust-safety#verification">Provider Verification</a>
             </div>
             <div className="footer__column">
               <strong>Support</strong>
-              <a href="mailto:hello@requote.ng">Help Center</a>
-              <a href="mailto:hello@requote.ng">Contact Us</a>
-              <span>Terms of Service</span>
-              <span>Privacy Policy</span>
+              <a href="mailto:info@requote.cc">Help Center</a>
+              <a href="mailto:info@requote.cc">Contact Us</a>
+              <a href="/terms">Terms of Service</a>
+              <a href="/privacy">Privacy Policy</a>
+              <a href="/cookies">Cookie Policy</a>
             </div>
           </div>
           <div className="footer__bottom">

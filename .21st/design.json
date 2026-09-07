@@ -2,65 +2,72 @@
   "version": 1,
   "project": {
     "name": "requote-project-v1",
-    "productType": "request-and-offer marketplace",
-    "stack": ["react", "vite"]
+    "productType": "trust-first request-and-offer marketplace",
+    "stack": ["next.js", "react", "typescript"]
   },
   "sources": {
-    "tokens": ["src/index.css", "src/app.css"],
-    "components": [],
-    "assets": ["src/assets"],
+    "tokens": [
+      "src/index.css",
+      "src/App.css",
+      "app/product.css",
+      "app/legal-auth.css",
+      "app/request.css"
+    ],
+    "components": ["components"],
+    "assets": ["public", "src/assets"],
     "instructions": []
   },
   "design": {
     "colorMode": "light",
     "colors": {
-      "--muted": {
-        "value": "#65708a",
-        "source": "src/index.css"
-      }
+      "primary": "#1950D2",
+      "navy": "#07142F",
+      "surface": "#F5F7FB",
+      "success": "#16845B"
     },
-    "typography": {},
-    "spacing": {},
-    "radius": {},
-    "shadows": {},
-    "motion": {},
-    "density": "unknown"
+    "typography": {
+      "heading": "Hanken Grotesk",
+      "interface": "Plus Jakarta Sans"
+    },
+    "density": "comfortable"
   },
   "components": {
     "installed": [],
-    "preferredPrimitives": [],
-    "patterns": []
+    "preferredPrimitives": [
+      "SiteHeader",
+      "SiteFooter",
+      "AuthShell",
+      "LegalPage"
+    ],
+    "patterns": [
+      "trust-first disclosure",
+      "progressive request capture",
+      "documented agreement",
+      "responsive two-panel workspace"
+    ]
   },
   "constraints": {
-    "must": [],
-    "avoid": []
+    "must": [
+      "Keep preview authentication and storage limitations explicit",
+      "Meet visible keyboard focus and reduced-motion expectations",
+      "Use Requote blue for primary actions and navy for trust surfaces"
+    ],
+    "avoid": [
+      "Claims of live escrow, verification, database persistence, or provider notification",
+      "Decorative motion that ignores reduced-motion preferences"
+    ]
   },
   "decisions": [
-    "The public landing page follows Figma nodes 53:1403 (desktop) and 52:1212 (mobile), using Hanken Grotesk for editorial typography, Plus Jakarta Sans for UI text, #1950D2 for primary actions, #000820/#12203D for trust surfaces, and committed Figma-exported imagery and icons.",
-    "Landing-page motion is intentionally restrained: only the hero offer stack, requester and provider mockups, typed request example, budget indicator, and user-initiated category image interactions animate; all motion is disabled when reduced motion is preferred.",
-    "Provider checklist icons retain the Requote blue at a softened opacity, while dark SVG icons on Trust & Safety cards are rendered white for accessible contrast against navy surfaces."
+    "The selected product direction extends the Figma landing page into a trust-first Next.js application using consistent navy, Requote blue, white, and soft-grey surfaces.",
+    "The request journey uses five focused steps—basics, details, delivery, budget, and review—with a login handoff only when saving or publishing.",
+    "Legal, authentication, request, and confirmation screens share the landing page typography and action hierarchy while remaining explicit product previews where backend services are not connected.",
+    "Motion remains restrained and is disabled when reduced motion is preferred."
   ],
   "evidence": [
-    {
-      "fact": "design.colorMode:light",
-      "source": "src/index.css, src/app.css"
-    },
-    {
-      "fact": "design.tokens",
-      "source": "src/app.css"
-    },
-    {
-      "fact": "design.tokens",
-      "source": "src/index.css"
-    },
-    {
-      "fact": "project.stack:react",
-      "source": "package.json"
-    },
-    {
-      "fact": "project.stack:vite",
-      "source": "package.json"
-    }
+    { "fact": "project.stack:next.js", "source": "package.json" },
+    { "fact": "design.tokens", "source": "app/product.css" },
+    { "fact": "request.flow", "source": "components/request/request-wizard.tsx" },
+    { "fact": "product.routes", "source": "app" }
   ],
-  "generatedAt": "2026-09-02T13:40:56.059Z"
+  "generatedAt": "2026-09-07T00:00:00.000Z"
 }

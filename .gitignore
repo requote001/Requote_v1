@@ -24,4 +24,8 @@ dist-ssr
 *.sw?
 
 # Local review artifacts
+.next
+out
+.vercel
+.tmp-next-package
 tmp/
