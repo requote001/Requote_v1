@@ -7,7 +7,7 @@ import "./request.css";
 import "./responsive.css";
 
 const siteUrl = new URL(
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://requote.ng",
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://requote.cc",
 );
 
 export const metadata: Metadata = {
@@ -96,12 +96,12 @@ const structuredData = {
   "@graph": [
     {
       "@type": "Organization",
-      "@id": "https://requote.ng/#organization",
+      "@id": "https://requote.cc/#organization",
       name: "Requote",
-      url: "https://requote.ng/",
+      url: "https://requote.cc/",
       logo: {
         "@type": "ImageObject",
-        url: "https://requote.ng/requote-logo.png",
+        url: "https://requote.cc/requote-logo.png",
         width: 363,
         height: 110,
       },
@@ -110,11 +110,11 @@ const structuredData = {
     },
     {
       "@type": "WebSite",
-      "@id": "https://requote.ng/#website",
-      url: "https://requote.ng/",
+      "@id": "https://requote.cc/#website",
+      url: "https://requote.cc/",
       name: "Requote",
       description: "A request-and-offer marketplace for products and services.",
-      publisher: { "@id": "https://requote.ng/#organization" },
+      publisher: { "@id": "https://requote.cc/#organization" },
       inLanguage: "en-NG",
     },
   ],
