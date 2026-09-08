@@ -149,11 +149,11 @@ const processSteps = [
 
 const categories = [
   ["Agriculture", "/figma/agriculture.jpg", "A green agricultural field"],
-  ["Fabrication", "/figma/fabrication.jpg", "A fabrication workshop"],
+  ["Fabrication", "/figma/digital-services.jpg", "A fabrication workshop"],
   [
     "Skilled Trades",
-    "/figma/digital-services.jpg",
     
+    "/figma/fabrication.jpg",
     "A skilled professional at work",
   ],
   [
