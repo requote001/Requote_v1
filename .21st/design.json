@@ -62,7 +62,8 @@
     "The request journey uses five focused steps—basics, details, delivery, budget, and review—with a login handoff only when saving or publishing.",
     "Legal, authentication, request, and confirmation screens share the landing page typography and action hierarchy while remaining explicit product previews where backend services are not connected.",
     "Motion remains restrained and is disabled when reduced motion is preferred.",
-    "During early access, login and account creation resolve to one role-aware waitlist experience; request drafts remain local until publishing accounts open."
+    "During early access, login and account creation resolve to one role-aware waitlist experience; request drafts remain local until publishing accounts open.",
+    "The waitlist uses a minimalist white-space layout: a short contextual introduction is paired with a compact early-access form, then collapses cleanly to one column on mobile."
   ],
   "evidence": [
     { "fact": "project.stack:next.js", "source": "package.json" },

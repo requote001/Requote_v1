@@ -31,6 +31,9 @@ export function WaitlistForm() {
     : "general";
 
   const [role, setRole] = useState<WaitlistRole>(initialRole);
+  const [showOptionalDetails, setShowOptionalDetails] = useState(
+    initialRole === "provider",
+  );
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -133,13 +136,15 @@ export function WaitlistForm() {
 
   return (
     <form className="auth-form waitlist-form" onSubmit={submit} noValidate>
-      <div className="waitlist-context">
-        <span aria-hidden="true">✦</span>
-        <p>{contextMessage}</p>
-      </div>
+      {intent !== "general" && (
+        <div className="waitlist-context">
+          <span aria-hidden="true">✦</span>
+          <p>{contextMessage}</p>
+        </div>
+      )}
 
       <fieldset className="role-picker waitlist-role-picker">
-        <legend>How do you plan to use Requote?</legend>
+        <legend>I’m joining as</legend>
         <label className={role === "requester" ? "is-selected" : ""}>
           <input
             type="radio"
@@ -149,8 +154,8 @@ export function WaitlistForm() {
             onChange={() => setRole("requester")}
           />
           <span>
-            <strong>I need something</strong>
-            <small>Post requests and compare offers.</small>
+            <strong>Someone who needs help</strong>
+            <small>I want to post requests.</small>
           </span>
         </label>
         <label className={role === "provider" ? "is-selected" : ""}>
@@ -159,11 +164,14 @@ export function WaitlistForm() {
             name="role"
             value="provider"
             checked={role === "provider"}
-            onChange={() => setRole("provider")}
+            onChange={() => {
+              setRole("provider");
+              setShowOptionalDetails(true);
+            }}
           />
           <span>
-            <strong>I provide services</strong>
-            <small>Find requests and submit offers.</small>
+            <strong>A service provider</strong>
+            <small>I want to find suitable work.</small>
           </span>
         </label>
       </fieldset>
@@ -182,61 +190,74 @@ export function WaitlistForm() {
           />
         </label>
         <label>
-          Phone number <span className="optional">Optional</span>
+          Email address
           <input
-            type="tel"
-            autoComplete="tel"
-            value={phone}
-            onChange={(event) => setPhone(event.target.value)}
-            placeholder="+234"
-            maxLength={30}
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder="you@example.com"
+            maxLength={254}
+            required
           />
         </label>
       </div>
 
-      <label>
-        Email address
-        <input
-          type="email"
-          autoComplete="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          placeholder="you@example.com"
-          maxLength={254}
-          required
-        />
-      </label>
-
-      <div className="form-grid form-grid--two">
-        <label>
-          City or area <span className="optional">Optional</span>
-          <input
-            type="text"
-            autoComplete="address-level2"
-            value={city}
-            onChange={(event) => setCity(event.target.value)}
-            placeholder="e.g. Ikeja, Lagos"
-            maxLength={100}
-          />
-        </label>
-
-        {role !== "requester" && (
+      {showOptionalDetails ? (
+        <div
+          className="form-grid form-grid--two waitlist-form__optional-fields"
+          id="waitlist-optional-details"
+        >
           <label>
-            Main service <span className="optional">Optional</span>
-            <select
-              value={serviceCategory}
-              onChange={(event) => setServiceCategory(event.target.value)}
-            >
-              <option value="">Select a category</option>
-              {providerCategories.map((category) => (
-                <option value={category} key={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
+            Phone number <span className="optional">Optional</span>
+            <input
+              type="tel"
+              autoComplete="tel"
+              value={phone}
+              onChange={(event) => setPhone(event.target.value)}
+              placeholder="+234"
+              maxLength={30}
+            />
           </label>
-        )}
-      </div>
+          <label>
+            City or area <span className="optional">Optional</span>
+            <input
+              type="text"
+              autoComplete="address-level2"
+              value={city}
+              onChange={(event) => setCity(event.target.value)}
+              placeholder="e.g. Ikeja, Lagos"
+              maxLength={100}
+            />
+          </label>
+          {role === "provider" && (
+            <label className="waitlist-form__service-field">
+              Main service <span className="optional">Optional</span>
+              <select
+                value={serviceCategory}
+                onChange={(event) => setServiceCategory(event.target.value)}
+              >
+                <option value="">Select a category</option>
+                {providerCategories.map((category) => (
+                  <option value={category} key={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+        </div>
+      ) : (
+        <button
+          className="waitlist-form__details-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="waitlist-optional-details"
+          onClick={() => setShowOptionalDetails(true)}
+        >
+          <span aria-hidden="true">+</span> Add optional contact details
+        </button>
+      )}
 
       <label className="waitlist-honeypot" aria-hidden="true">
         Company website
