@@ -61,13 +61,15 @@
     "The selected product direction extends the Figma landing page into a trust-first Next.js application using consistent navy, Requote blue, white, and soft-grey surfaces.",
     "The request journey uses five focused steps—basics, details, delivery, budget, and review—with a login handoff only when saving or publishing.",
     "Legal, authentication, request, and confirmation screens share the landing page typography and action hierarchy while remaining explicit product previews where backend services are not connected.",
-    "Motion remains restrained and is disabled when reduced motion is preferred."
+    "Motion remains restrained and is disabled when reduced motion is preferred.",
+    "During early access, login and account creation resolve to one role-aware waitlist experience; request drafts remain local until publishing accounts open."
   ],
   "evidence": [
     { "fact": "project.stack:next.js", "source": "package.json" },
     { "fact": "design.tokens", "source": "app/product.css" },
     { "fact": "request.flow", "source": "components/request/request-wizard.tsx" },
-    { "fact": "product.routes", "source": "app" }
+    { "fact": "product.routes", "source": "app" },
+    { "fact": "waitlist.flow", "source": "app/waitlist and components/waitlist" }
   ],
-  "generatedAt": "2026-09-07T00:00:00.000Z"
+  "generatedAt": "2026-09-09T00:00:00.000Z"
 }

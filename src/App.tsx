@@ -6,9 +6,9 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 
-const earlyAccessLink = "/login";
+const earlyAccessLink = "/waitlist";
 const requesterLink = "/post-a-request";
-const providerLink = "/create-account?role=provider";
+const providerLink = "/waitlist?role=provider&source=landing-provider";
 
 const requestExamples = [
   "Commercial welding service",
@@ -236,7 +236,7 @@ function App() {
             </a>
             <div className="mobile-nav-actions">
               <a className="text-button" href={earlyAccessLink}>
-                Log in
+                Join waitlist
               </a>
               <a className="button button--primary" href={requesterLink}>
                 Post a request
@@ -245,7 +245,7 @@ function App() {
           </nav>
           <div className="topbar__actions">
             <a className="text-button" href={earlyAccessLink}>
-              Log in
+              Join waitlist
             </a>
             <a
               className="button button--primary button--compact"

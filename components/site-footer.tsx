@@ -14,7 +14,9 @@ export function SiteFooter() {
           <strong>Product</strong>
           <Link href="/post-a-request">Post a request</Link>
           <Link href="/how-it-works">How it works</Link>
-          <Link href="/create-account?role=provider">Become a provider</Link>
+          <Link href="/waitlist?role=provider&source=product-footer">
+            Become a provider
+          </Link>
         </div>
         <div>
           <strong>Trust</strong>

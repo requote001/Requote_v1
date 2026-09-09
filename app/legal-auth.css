@@ -221,6 +221,7 @@
   gap: 9px;
 }
 .auth-form input:not([type="checkbox"]):not([type="radio"]),
+.auth-form select,
 .request-form
   input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 .request-form select,
@@ -243,6 +244,7 @@
   resize: vertical;
 }
 .auth-form input:focus,
+.auth-form select:focus,
 .request-form input:focus,
 .request-form select:focus,
 .request-form textarea:focus {
@@ -391,6 +393,84 @@
 .auth-success p {
   color: var(--p-body);
   line-height: 1.65;
+}
+.waitlist-context {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  align-items: start;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid #cbd9fa;
+  border-radius: 12px;
+  background: #edf3ff;
+}
+.waitlist-context > span {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: #fff;
+  background: var(--p-blue);
+  font-size: 0.72rem;
+}
+.waitlist-context p,
+.waitlist-privacy-note {
+  margin: 0;
+  color: #4f607f;
+  font-size: 0.79rem;
+  line-height: 1.55;
+}
+.waitlist-form .form-grid > label:only-child {
+  grid-column: 1 / -1;
+}
+.waitlist-form select {
+  width: 100%;
+  min-height: 50px;
+  padding: 0 40px 0 14px;
+  border: 1px solid #cad3e3;
+  border-radius: 11px;
+  color: var(--p-ink);
+  background: #fff;
+}
+.waitlist-form .optional {
+  color: var(--p-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+.waitlist-honeypot {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+}
+.waitlist-privacy-note {
+  text-align: center;
+}
+.waitlist-success {
+  min-height: 390px;
+  align-content: center;
+}
+.waitlist-success > div {
+  display: grid;
+  gap: 8px;
+}
+.waitlist-success h2 {
+  font-size: clamp(1.8rem, 4vw, 2.45rem);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+.waitlist-success p strong {
+  color: var(--p-ink);
+}
+.waitlist-saved-note {
+  padding: 13px 15px;
+  border-left: 3px solid var(--p-blue);
+  border-radius: 0 10px 10px 0;
+  background: #edf3ff;
 }
 .auth-page__footer {
   display: flex;

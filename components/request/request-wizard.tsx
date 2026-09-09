@@ -2,11 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
-import {
-  getPreviewSession,
-  storePendingRequest,
-  submitPreviewRequest,
-} from "@/lib/preview-session";
+import { storePendingRequest } from "@/lib/preview-session";
 import {
   initialRequest,
   REQUEST_DRAFT_KEY,
@@ -160,7 +156,7 @@ export function RequestWizard() {
     setTopLevel("attachmentNames", names);
   }
 
-  async function submitRequest(status: RequestStatus) {
+  function submitRequest(status: RequestStatus) {
     const errors = validateRequestPayload(request);
     if (errors.length > 0) {
       setError(errors[0]);
@@ -171,34 +167,12 @@ export function RequestWizard() {
     }
 
     const submission = { request, status };
-    const session = getPreviewSession();
-
-    if (!session) {
-      storePendingRequest(submission);
-      router.push("/login?next=%2Fpost-a-request%2Fcomplete&intent=" + status);
-      return;
-    }
-
     setSubmitting(status);
     setError("");
-    try {
-      const saved = await submitPreviewRequest(submission);
-      window.localStorage.removeItem(REQUEST_DRAFT_KEY);
-      router.push(
-        "/post-a-request/complete?id=" +
-          encodeURIComponent(saved.id) +
-          "&status=" +
-          saved.status,
-      );
-    } catch (caught) {
-      setError(
-        caught instanceof Error
-          ? caught.message
-          : "The request could not be processed.",
-      );
-    } finally {
-      setSubmitting(null);
-    }
+    storePendingRequest(submission);
+    router.push(
+      "/waitlist?role=requester&source=request-flow&intent=" + status,
+    );
   }
 
   return (
@@ -653,7 +627,9 @@ export function RequestWizard() {
                   disabled={submitting !== null}
                   onClick={() => submitRequest("draft")}
                 >
-                  {submitting === "draft" ? "Saving…" : "Save as draft"}
+                  {submitting === "draft"
+                    ? "Saving…"
+                    : "Save draft & join waitlist"}
                 </button>
                 <button
                   className="product-primary-button"
@@ -662,8 +638,8 @@ export function RequestWizard() {
                   onClick={() => submitRequest("published")}
                 >
                   {submitting === "published"
-                    ? "Publishing…"
-                    : "Publish request"}
+                    ? "Continuing…"
+                    : "Join waitlist to publish"}
                 </button>
               </div>
             )}

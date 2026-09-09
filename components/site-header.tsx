@@ -21,8 +21,8 @@ export function SiteHeader({ compact = false }: SiteHeaderProps) {
           <Link href="/terms">Legal</Link>
         </nav>
         <div className="product-header__actions">
-          <Link className="product-link-button" href="/login">
-            Log in
+          <Link className="product-link-button" href="/waitlist">
+            Join waitlist
           </Link>
           <Link
             className="product-primary-button product-primary-button--small"

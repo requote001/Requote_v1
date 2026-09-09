@@ -143,7 +143,7 @@ export default function HowItWorksPage() {
               </ul>
               <Link
                 className="product-light-button"
-                href="/create-account?role=provider"
+                href="/waitlist?role=provider&source=how-it-works"
               >
                 Join as a provider
               </Link>

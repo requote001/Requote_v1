@@ -6,6 +6,26 @@ type AuthShellProps = {
   title: string;
   description: string;
   children: ReactNode;
+  panel?: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    items: [string, string, string];
+    footer: string;
+  };
+};
+
+const defaultPanel = {
+  eyebrow: "Protected process",
+  title: "Turn a clear request into a trusted transaction.",
+  description:
+    "Your request, offers, agreement, and delivery evidence stay connected from the first detail to the final confirmation.",
+  items: [
+    "Compare offers against one clear brief.",
+    "Keep payment tied to the agreement.",
+    "Use documented evidence if something changes.",
+  ] as [string, string, string],
+  footer: "Preview experience - No live payment is collected.",
 };
 
 export function AuthShell({
@@ -13,6 +33,7 @@ export function AuthShell({
   title,
   description,
   children,
+  panel = defaultPanel,
 }: AuthShellProps) {
   return (
     <main className="auth-page">
@@ -23,26 +44,20 @@ export function AuthShell({
         <aside className="auth-trust-panel">
           <div>
             <p className="product-kicker product-kicker--light">
-              Protected process
+              {panel.eyebrow}
             </p>
-            <h2>Turn a clear request into a trusted transaction.</h2>
-            <p>
-              Your request, offers, agreement, and delivery evidence stay
-              connected from the first detail to the final confirmation.
-            </p>
+            <h2>{panel.title}</h2>
+            <p>{panel.description}</p>
           </div>
           <ul>
-            <li>
-              <span>01</span>Compare offers against one clear brief.
-            </li>
-            <li>
-              <span>02</span>Keep payment tied to the agreement.
-            </li>
-            <li>
-              <span>03</span>Use documented evidence if something changes.
-            </li>
+            {panel.items.map((item, index) => (
+              <li key={item}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                {item}
+              </li>
+            ))}
           </ul>
-          <small>Preview experience · No live payment is collected.</small>
+          <small>{panel.footer}</small>
         </aside>
         <section className="auth-card">
           <header>
