@@ -64,7 +64,8 @@
     "Motion remains restrained and is disabled when reduced motion is preferred.",
     "During early access, login and account creation resolve to one role-aware waitlist experience; request drafts remain local until publishing accounts open.",
     "The waitlist uses a minimalist white-space layout: a short contextual introduction is paired with a compact early-access form, then collapses cleanly to one column on mobile.",
-    "Requote now presents a connected five-path audience model—clients, providers, employers, professionals, and investors—using a restrained network illustration and role-specific early-access handoffs."
+    "Requote now presents a connected five-path audience model—clients, providers, employers, professionals, and investors—using a restrained network illustration and role-specific early-access handoffs.",
+    "The role-selection section uses a strong orientation panel followed by a visual hierarchy of two primary marketplace paths and three supporting opportunity paths."
   ],
   "evidence": [
     { "fact": "project.stack:next.js", "source": "package.json" },

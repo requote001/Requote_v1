@@ -202,6 +202,7 @@ const audiencePaths = [
     action: "Start a request",
     href: requesterLink,
     tone: "client",
+    featured: true,
   },
   {
     number: "02",
@@ -211,6 +212,7 @@ const audiencePaths = [
     action: "Join as a provider",
     href: providerLink,
     tone: "provider",
+    featured: true,
   },
   {
     number: "03",
@@ -440,17 +442,34 @@ function App() {
           <div className="layout">
             <div className="audience-paths__heading">
               <div>
-                <p className="section-kicker">A network with more than one side</p>
-                <h2>Choose the role you want Requote to make stronger.</h2>
+                <p className="section-kicker">Choose your route</p>
+                <h2>Find the Requote path that moves you forward.</h2>
               </div>
               <p>
-                Whether you are sourcing work, offering it, building a team,
-                growing your career, or backing the ecosystem, your path begins
-                with context.
+                Requote is built around the next move you want to make. Start
+                with the role that sounds most like you and we will shape the
+                right early-access experience around it.
               </p>
             </div>
 
-            <div className="audience-paths__layout">
+            <div className="audience-paths__signal">
+              <div className="audience-paths__signal-copy">
+                <div className="audience-paths__signal-label">
+                  <span>01</span>
+                  <strong>Start with context</strong>
+                </div>
+                <h3>One network. A clearer next move.</h3>
+                <p>
+                  The best connections begin when everyone understands the
+                  outcome. Tell Requote where you fit, then help us build the
+                  tools that make that journey feel simpler.
+                </p>
+                <div className="audience-paths__signal-points" aria-label="What your path shapes">
+                  <span>Better briefs</span>
+                  <span>Better matches</span>
+                  <span>Better momentum</span>
+                </div>
+              </div>
               <div className="audience-network" aria-hidden="true">
                 <span className="audience-network__ring audience-network__ring--one" />
                 <span className="audience-network__ring audience-network__ring--two" />
@@ -476,26 +495,29 @@ function App() {
                 </span>
                 <p>More clarity<br />between people.</p>
               </div>
+            </div>
 
-              <div className="audience-paths__grid">
+            <div className="audience-paths__grid">
                 {audiencePaths.map((path) => (
                   <a
                     className={
-                      "audience-path audience-path--" + path.tone
+                      "audience-path audience-path--" + path.tone +
+                      (path.featured ? " audience-path--featured" : "")
                     }
                     href={path.href}
                     key={path.label}
                   >
-                    <span className="audience-path__number">{path.number}</span>
-                    <div>
+                    <div className="audience-path__topline">
+                      <span className="audience-path__number">{path.number}</span>
                       <small>{path.label}</small>
+                    </div>
+                    <div className="audience-path__content">
                       <h3>{path.title}</h3>
                       <p>{path.copy}</p>
                     </div>
-                    <b>{path.action} <i aria-hidden="true">→</i></b>
+                    <b className="audience-path__action">{path.action} <i aria-hidden="true">↗</i></b>
                   </a>
                 ))}
-              </div>
             </div>
           </div>
         </section>
