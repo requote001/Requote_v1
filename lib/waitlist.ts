@@ -1,4 +1,11 @@
-export const WAITLIST_ROLES = ["requester", "provider", "both"] as const;
+export const WAITLIST_ROLES = [
+  "requester",
+  "provider",
+  "employer",
+  "employee",
+  "investor",
+  "both",
+] as const;
 
 export type WaitlistRole = (typeof WAITLIST_ROLES)[number];
 export type WaitlistIntent = "general" | "draft" | "published";
@@ -10,6 +17,7 @@ export type WaitlistSubmission = {
   role: WaitlistRole;
   city: string;
   serviceCategory: string;
+  profileInterest: string;
   source: string;
   utmSource: string;
   utmCampaign: string;
@@ -39,6 +47,7 @@ export function validateWaitlistSubmission(input: unknown): ValidationResult {
   const phone = cleanText(body.phone, 30);
   const city = cleanText(body.city, 100);
   const serviceCategory = cleanText(body.serviceCategory, 120);
+  const profileInterest = cleanText(body.profileInterest, 120);
   const source = cleanText(body.source, 100) || "website";
   const utmSource = cleanText(body.utmSource, 120);
   const utmCampaign = cleanText(body.utmCampaign, 120);
@@ -77,6 +86,7 @@ export function validateWaitlistSubmission(input: unknown): ValidationResult {
       role,
       city,
       serviceCategory,
+      profileInterest,
       source,
       utmSource,
       utmCampaign,

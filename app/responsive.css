@@ -33,6 +33,22 @@
   .auth-trust-panel ul {
     margin: 12px 0;
   }
+  .request-page {
+    padding: 0;
+  }
+  .request-gateway {
+    grid-template-columns: 1fr;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .request-gateway__copy {
+    min-height: auto;
+    padding: 38px 26px;
+  }
+  .request-gateway__paths {
+    padding: 30px 24px 40px;
+  }
   .request-flow {
     grid-template-columns: 280px minmax(0, 1fr);
   }
@@ -198,6 +214,14 @@
   .choice-grid,
   .review-grid {
     grid-template-columns: 1fr;
+  }
+  .request-gateway__path {
+    grid-template-columns: 24px minmax(0, 1fr);
+    gap: 11px;
+  }
+  .request-gateway__path b {
+    grid-column: 2;
+    padding-top: 0;
   }
   .request-workspace__saved {
     max-width: 92px;

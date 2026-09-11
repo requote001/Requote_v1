@@ -3,17 +3,102 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState, type FormEvent } from "react";
-import type { WaitlistIntent, WaitlistRole } from "@/lib/waitlist";
+import {
+  WAITLIST_ROLES,
+  type WaitlistIntent,
+  type WaitlistRole,
+} from "@/lib/waitlist";
 
-const providerCategories = [
-  "Agriculture",
-  "Fabrication & Welding",
-  "Construction & Skilled Trades",
-  "Digital & Technology Services",
-  "Logistics & Delivery",
-  "Professional Services",
-  "Other",
+const roleOptions: Array<{
+  value: WaitlistRole;
+  title: string;
+  copy: string;
+}> = [
+  {
+    value: "requester",
+    title: "A client",
+    copy: "I need a product or service.",
+  },
+  {
+    value: "provider",
+    title: "A provider",
+    copy: "I offer products or services.",
+  },
+  {
+    value: "employer",
+    title: "An employer",
+    copy: "I want to build a capable team.",
+  },
+  {
+    value: "employee",
+    title: "A professional",
+    copy: "I am looking for meaningful work.",
+  },
+  {
+    value: "investor",
+    title: "An investor",
+    copy: "I want to explore Requote’s growth.",
+  },
+  {
+    value: "both",
+    title: "More than one",
+    copy: "I have more than one role in the network.",
+  },
 ];
+
+const interestOptions: Record<WaitlistRole, string[]> = {
+  requester: [
+    "Business procurement",
+    "Personal projects",
+    "Ongoing operational needs",
+    "Other",
+  ],
+  provider: [
+    "Agriculture",
+    "Fabrication & Welding",
+    "Construction & Skilled Trades",
+    "Digital & Technology Services",
+    "Logistics & Delivery",
+    "Professional Services",
+    "Other",
+  ],
+  employer: [
+    "Full-time hiring",
+    "Contract or project talent",
+    "Operations and field teams",
+    "Specialist roles",
+    "Other",
+  ],
+  employee: [
+    "Skilled trades",
+    "Digital and technology",
+    "Operations and logistics",
+    "Professional services",
+    "Other",
+  ],
+  investor: [
+    "Early-stage investment",
+    "Strategic partnership",
+    "Market and growth research",
+    "Advisory and ecosystem support",
+    "Other",
+  ],
+  both: [
+    "Products and services",
+    "Work and talent",
+    "Partnership and investment",
+    "Other",
+  ],
+};
+
+const interestLabels: Record<WaitlistRole, string> = {
+  requester: "What do you usually need help with?",
+  provider: "What do you provide?",
+  employer: "What are you looking to hire for?",
+  employee: "What is your career area?",
+  investor: "What is your interest in Requote?",
+  both: "What are you most interested in?",
+};
 
 type ApiResponse = {
   success?: boolean;
@@ -22,8 +107,10 @@ type ApiResponse = {
 
 export function WaitlistForm() {
   const searchParams = useSearchParams();
-  const initialRole: WaitlistRole =
-    searchParams.get("role") === "provider" ? "provider" : "requester";
+  const roleFromQuery = searchParams.get("role");
+  const initialRole =
+    WAITLIST_ROLES.find((candidate) => candidate === roleFromQuery) ??
+    "requester";
   const intent: WaitlistIntent = ["draft", "published"].includes(
     searchParams.get("intent") ?? "",
   )
@@ -32,13 +119,13 @@ export function WaitlistForm() {
 
   const [role, setRole] = useState<WaitlistRole>(initialRole);
   const [showOptionalDetails, setShowOptionalDetails] = useState(
-    initialRole === "provider",
+    initialRole !== "requester",
   );
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
-  const [serviceCategory, setServiceCategory] = useState("");
+  const [profileInterest, setProfileInterest] = useState("");
   const [consent, setConsent] = useState(false);
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
@@ -76,7 +163,8 @@ export function WaitlistForm() {
           phone,
           role,
           city,
-          serviceCategory: role === "requester" ? "" : serviceCategory,
+          serviceCategory: role === "provider" ? profileInterest : "",
+          profileInterest,
           source: searchParams.get("source") ?? "website",
           utmSource: searchParams.get("utm_source") ?? "",
           utmCampaign: searchParams.get("utm_campaign") ?? "",
@@ -145,35 +233,28 @@ export function WaitlistForm() {
 
       <fieldset className="role-picker waitlist-role-picker">
         <legend>I’m joining as</legend>
-        <label className={role === "requester" ? "is-selected" : ""}>
-          <input
-            type="radio"
-            name="role"
-            value="requester"
-            checked={role === "requester"}
-            onChange={() => setRole("requester")}
-          />
-          <span>
-            <strong>Someone who needs help</strong>
-            <small>I want to post requests.</small>
-          </span>
-        </label>
-        <label className={role === "provider" ? "is-selected" : ""}>
-          <input
-            type="radio"
-            name="role"
-            value="provider"
-            checked={role === "provider"}
-            onChange={() => {
-              setRole("provider");
-              setShowOptionalDetails(true);
-            }}
-          />
-          <span>
-            <strong>A service provider</strong>
-            <small>I want to find suitable work.</small>
-          </span>
-        </label>
+        {roleOptions.map((option) => (
+          <label
+            className={role === option.value ? "is-selected" : ""}
+            key={option.value}
+          >
+            <input
+              type="radio"
+              name="role"
+              value={option.value}
+              checked={role === option.value}
+              onChange={() => {
+                setRole(option.value);
+                setProfileInterest("");
+                setShowOptionalDetails(option.value !== "requester");
+              }}
+            />
+            <span>
+              <strong>{option.title}</strong>
+              <small>{option.copy}</small>
+            </span>
+          </label>
+        ))}
       </fieldset>
 
       <div className="form-grid form-grid--two">
@@ -230,22 +311,20 @@ export function WaitlistForm() {
               maxLength={100}
             />
           </label>
-          {role === "provider" && (
-            <label className="waitlist-form__service-field">
-              Main service <span className="optional">Optional</span>
-              <select
-                value={serviceCategory}
-                onChange={(event) => setServiceCategory(event.target.value)}
-              >
-                <option value="">Select a category</option>
-                {providerCategories.map((category) => (
-                  <option value={category} key={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
+          <label className="waitlist-form__service-field">
+            {interestLabels[role]} <span className="optional">Optional</span>
+            <select
+              value={profileInterest}
+              onChange={(event) => setProfileInterest(event.target.value)}
+            >
+              <option value="">Select an option</option>
+              {interestOptions[role].map((option) => (
+                <option value={option} key={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
       ) : (
         <button

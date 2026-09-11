@@ -7,8 +7,11 @@ import {
 } from "react";
 
 const earlyAccessLink = "/waitlist";
-const requesterLink = "/post-a-request";
+const requesterLink = "/post-a-request?journey=request";
 const providerLink = "/waitlist?role=provider&source=landing-provider";
+const employerLink = "/waitlist?role=employer&source=landing-employer";
+const employeeLink = "/waitlist?role=employee&source=landing-employee";
+const investorLink = "/waitlist?role=investor&source=landing-investor";
 
 const requestExamples = [
   "Commercial welding service",
@@ -181,9 +184,61 @@ const faqs = [
     "Yes. Requote is designed so one account can request products or services and also provide work where the user is qualified.",
   ],
   [
+    "Can employers, professionals, and investors join?",
+    "Yes. Requote is opening dedicated early-access paths for employers building teams, professionals looking for meaningful work, and investors or partners following the network’s growth.",
+  ],
+  [
     "Does Requote provide delivery?",
     "Both parties may use their own transport arrangement or select Requote logistics partners where that option is available.",
   ],
+];
+
+const audiencePaths = [
+  {
+    number: "01",
+    label: "Clients",
+    title: "Turn a need into a clear brief.",
+    copy: "Describe the outcome, compare capable offers, and keep every important detail visible.",
+    action: "Start a request",
+    href: requesterLink,
+    tone: "client",
+  },
+  {
+    number: "02",
+    label: "Providers",
+    title: "Put expertise where it matters.",
+    copy: "Join a network built around more context, more credible work, and clearer expectations.",
+    action: "Join as a provider",
+    href: providerLink,
+    tone: "provider",
+  },
+  {
+    number: "03",
+    label: "Employers",
+    title: "Build teams with more intention.",
+    copy: "Help shape how Requote supports the employers and roles that keep businesses moving.",
+    action: "Join as an employer",
+    href: employerLink,
+    tone: "employer",
+  },
+  {
+    number: "04",
+    label: "Professionals",
+    title: "Find work with a clearer fit.",
+    copy: "Tell us your area, goals, and the opportunities you want to see more of.",
+    action: "Join as a professional",
+    href: employeeLink,
+    tone: "employee",
+  },
+  {
+    number: "05",
+    label: "Investors",
+    title: "See what a stronger work network can unlock.",
+    copy: "Follow Requote’s early growth and explore strategic ways to support the ecosystem.",
+    action: "Explore the investor path",
+    href: investorLink,
+    tone: "investor",
+  },
 ];
 
 function App() {
@@ -225,11 +280,8 @@ function App() {
             <a href="#how-it-works" onClick={closeMenu}>
               How it works
             </a>
-            <a href="#requesters" onClick={closeMenu}>
-              For requesters
-            </a>
-            <a href="#providers" onClick={closeMenu}>
-              For providers
+            <a href="#paths" onClick={closeMenu}>
+              Who it&apos;s for
             </a>
             <a href="#trust" onClick={closeMenu}>
               Trust &amp; safety
@@ -238,8 +290,8 @@ function App() {
               <a className="text-button" href={earlyAccessLink}>
                 Join waitlist
               </a>
-              <a className="button button--primary" href={requesterLink}>
-                Post a request
+              <a className="button button--primary" href="#paths">
+                Choose your path
               </a>
             </div>
           </nav>
@@ -249,9 +301,9 @@ function App() {
             </a>
             <a
               className="button button--primary button--compact"
-              href={requesterLink}
+              href="#paths"
             >
-              Post a request
+              Choose your path
             </a>
           </div>
           <button
@@ -283,29 +335,29 @@ function App() {
             <div className="hero__content">
               <p className="pill">
                 <AssetIcon src="/figma/badge-escrow.svg" />
-                Escrow Protected Deals
+                Work, talent &amp; opportunity
               </p>
               <h1 id="hero-title">
-                Tell us what you need.<span>Get trusted offers.</span>
+                Build better work connections.<span>Move forward with clarity.</span>
               </h1>
               <p className="hero__lead">
-                Requote connects you with capable providers and protects your
-                transaction through secure escrow. We hold the funds until the
-                agreed work is done.
+                Requote brings clients, providers, employers, professionals,
+                and investors into a clearer network for work, growth, and
+                trusted opportunity.
               </p>
               <div className="hero__actions">
                 <a
                   className="button button--primary button--wide"
-                  href={requesterLink}
+                  href="#paths"
                 >
-                  Post a request
+                  Find your path
                   <AssetIcon src="/figma/arrow.svg" className="button__arrow" />
                 </a>
                 <a
                   className="button button--outline button--wide"
-                  href="#providers"
+                  href={requesterLink}
                 >
-                  Become a provider
+                  Start a request
                 </a>
               </div>
             </div>
@@ -384,6 +436,70 @@ function App() {
           </div>
         </section>
 
+        <section className="audience-paths section" id="paths">
+          <div className="layout">
+            <div className="audience-paths__heading">
+              <div>
+                <p className="section-kicker">A network with more than one side</p>
+                <h2>Choose the role you want Requote to make stronger.</h2>
+              </div>
+              <p>
+                Whether you are sourcing work, offering it, building a team,
+                growing your career, or backing the ecosystem, your path begins
+                with context.
+              </p>
+            </div>
+
+            <div className="audience-paths__layout">
+              <div className="audience-network" aria-hidden="true">
+                <span className="audience-network__ring audience-network__ring--one" />
+                <span className="audience-network__ring audience-network__ring--two" />
+                <span className="audience-network__line audience-network__line--one" />
+                <span className="audience-network__line audience-network__line--two" />
+                <span className="audience-network__node audience-network__node--client">
+                  Client
+                </span>
+                <span className="audience-network__node audience-network__node--provider">
+                  Provider
+                </span>
+                <span className="audience-network__node audience-network__node--employer">
+                  Employer
+                </span>
+                <span className="audience-network__node audience-network__node--employee">
+                  Talent
+                </span>
+                <span className="audience-network__node audience-network__node--investor">
+                  Investor
+                </span>
+                <span className="audience-network__core">
+                  <img src="/requote-mark.png" alt="" />
+                </span>
+                <p>More clarity<br />between people.</p>
+              </div>
+
+              <div className="audience-paths__grid">
+                {audiencePaths.map((path) => (
+                  <a
+                    className={
+                      "audience-path audience-path--" + path.tone
+                    }
+                    href={path.href}
+                    key={path.label}
+                  >
+                    <span className="audience-path__number">{path.number}</span>
+                    <div>
+                      <small>{path.label}</small>
+                      <h3>{path.title}</h3>
+                      <p>{path.copy}</p>
+                    </div>
+                    <b>{path.action} <i aria-hidden="true">→</i></b>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section className="process section" id="how-it-works">
           <div className="layout">
             <div className="section-heading">
@@ -416,8 +532,8 @@ function App() {
         <section className="story section" id="requesters">
           <div className="layout story__grid">
             <div className="story__copy">
-              <p className="section-kicker">For requesters</p>
-              <h2>Get exactly what you asked for, without the risk.</h2>
+              <p className="section-kicker">For clients</p>
+              <h2>Turn the work you need into a brief people can act on.</h2>
               <p>
                 One clear request becomes the source of truth for every offer,
                 payment, delivery, and review.
@@ -504,7 +620,7 @@ function App() {
               <button type="button">View agreement</button>
             </div>
             <div className="story__copy">
-              <p className="section-kicker">For providers</p>
+              <p className="section-kicker">For providers and experts</p>
               <h2>Find real work. Know you’ll get paid.</h2>
               <p>
                 Respond to legitimate requests, agree on the details, and start
@@ -660,20 +776,20 @@ function App() {
 
         <section className="closing section" id="request">
           <div className="layout">
-            <h2>Ready to transact with confidence?</h2>
+            <h2>Ready to make your next move with more clarity?</h2>
             <div className="closing__grid">
               <article>
-                <h3>Need something?</h3>
-                <p>Post a request and get offers.</p>
+                <h3>Need work done?</h3>
+                <p>Turn your need into a clear request.</p>
                 <a className="button button--primary" href={requesterLink}>
                   Post a request
                 </a>
               </article>
               <article>
-                <h3>Can provide something?</h3>
-                <p>Join to find legitimate work.</p>
-                <a className="button button--light" href={providerLink}>
-                  Join Requote
+                <h3>Looking to build, grow, or invest?</h3>
+                <p>Find the Requote path that matches your next step.</p>
+                <a className="button button--light" href="#paths">
+                  Explore your path
                 </a>
               </article>
             </div>
@@ -687,14 +803,17 @@ function App() {
             <div className="footer__brand">
               <Logo />
               <p>
-                The trusted request-and-offer marketplace connecting people with
-                capable providers in Nigeria.
+                A clearer network for clients, providers, teams, professionals,
+                and investors in Nigeria.
               </p>
             </div>
             <div className="footer__column">
               <strong>Product</strong>
               <a href={requesterLink}>Post a Request</a>
-              <a href="#providers">Become a Provider</a>
+              <a href={providerLink}>Become a Provider</a>
+              <a href={employerLink}>For Employers</a>
+              <a href={employeeLink}>For Professionals</a>
+              <a href={investorLink}>For Investors</a>
               <a href="/how-it-works">How it Works</a>
               <span>Pricing (TBA)</span>
             </div>

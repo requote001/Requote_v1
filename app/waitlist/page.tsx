@@ -6,7 +6,7 @@ import { WaitlistForm } from "@/components/waitlist/waitlist-form";
 export const metadata: Metadata = {
   title: "Join the waitlist",
   description:
-    "Join the Requote early-access waitlist as a requester or provider in Nigeria.",
+    "Join Requote early access as a client, provider, employer, professional, or investor in Nigeria.",
   alternates: { canonical: "/waitlist" },
 };
 
@@ -32,25 +32,32 @@ export default function WaitlistPage() {
           aria-labelledby="waitlist-story-title"
         >
           <p className="waitlist-minimal__eyebrow">Requote early access</p>
-          <h1 id="waitlist-story-title">Good work starts with a clear ask.</h1>
+          <h1 id="waitlist-story-title">One network. More ways to move forward.</h1>
           <p className="waitlist-minimal__lede">
-            Requote is a calmer way for people who need things done and
-            providers ready to do great work to find each other.
+            Requote brings clients, capable providers, growing teams, ambitious
+            professionals, and investors closer to the work that matters.
           </p>
 
           <div className="waitlist-minimal__points">
             <article>
               <span aria-hidden="true">01</span>
               <div>
-                <strong>For requesters</strong>
-                <p>Describe what you need and compare thoughtful offers.</p>
+                <strong>Clients and providers</strong>
+                <p>Turn a clear need into better work and better offers.</p>
               </div>
             </article>
             <article>
               <span aria-hidden="true">02</span>
               <div>
-                <strong>For providers</strong>
-                <p>Find clearer opportunities that suit your work.</p>
+                <strong>Employers and professionals</strong>
+                <p>Build capable teams and find meaningful opportunities.</p>
+              </div>
+            </article>
+            <article>
+              <span aria-hidden="true">03</span>
+              <div>
+                <strong>Investors and partners</strong>
+                <p>Follow the network shaping the next layer of work.</p>
               </div>
             </article>
           </div>

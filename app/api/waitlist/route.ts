@@ -79,6 +79,7 @@ export async function POST(request: Request) {
       role: submission.role,
       city: submission.city || null,
       service_category: submission.serviceCategory || null,
+      profile_interest: submission.profileInterest || null,
       source: submission.source,
       utm_source: submission.utmSource || null,
       utm_campaign: submission.utmCampaign || null,

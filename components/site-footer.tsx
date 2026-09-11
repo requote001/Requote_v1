@@ -8,14 +8,26 @@ export function SiteFooter() {
           <Link className="product-brand" href="/">
             <img src="/requote-logo.png" alt="Requote" />
           </Link>
-          <p>Clear requests, competitive offers, and protected transactions.</p>
+          <p>
+            Clearer work connections for clients, providers, teams,
+            professionals, and investors.
+          </p>
         </div>
         <div>
           <strong>Product</strong>
-          <Link href="/post-a-request">Post a request</Link>
+          <Link href="/post-a-request?journey=request">Post a request</Link>
           <Link href="/how-it-works">How it works</Link>
           <Link href="/waitlist?role=provider&source=product-footer">
             Become a provider
+          </Link>
+          <Link href="/waitlist?role=employer&source=product-footer">
+            For employers
+          </Link>
+          <Link href="/waitlist?role=employee&source=product-footer">
+            For professionals
+          </Link>
+          <Link href="/waitlist?role=investor&source=product-footer">
+            For investors
           </Link>
         </div>
         <div>

@@ -3,18 +3,26 @@ import { RequestWizard } from "@/components/request/request-wizard";
 import { SiteHeader } from "@/components/site-header";
 
 export const metadata: Metadata = {
-  title: "Post a request",
+  title: "Start with Requote",
   description:
-    "Describe what you need and receive offers from capable providers on Requote.",
+    "Choose whether you are joining Requote as a client, provider, employer, professional, or investor.",
   robots: { index: false, follow: false },
 };
 
-export default function PostRequestPage() {
+type PostRequestPageProps = {
+  searchParams: Promise<{ journey?: string }>;
+};
+
+export default async function PostRequestPage({
+  searchParams,
+}: PostRequestPageProps) {
+  const { journey } = await searchParams;
+
   return (
     <>
       <SiteHeader compact />
       <main className="request-page">
-        <RequestWizard />
+        <RequestWizard startInRequestFlow={journey === "request"} />
       </main>
     </>
   );

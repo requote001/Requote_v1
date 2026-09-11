@@ -22,13 +22,13 @@ export function SiteHeader({ compact = false }: SiteHeaderProps) {
         </nav>
         <div className="product-header__actions">
           <Link className="product-link-button" href="/waitlist">
-            Join waitlist
+            Join early access
           </Link>
           <Link
             className="product-primary-button product-primary-button--small"
             href="/post-a-request"
           >
-            Post a request
+            Choose your path
           </Link>
         </div>
       </div>

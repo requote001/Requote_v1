@@ -667,6 +667,7 @@
   font-size: 0.76rem;
 }
 .waitlist-minimal .waitlist-role-picker {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 9px;
 }
 .waitlist-minimal .waitlist-role-picker legend {
@@ -774,6 +775,9 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 24px;
     margin-top: 36px;
+  }
+  .waitlist-minimal .waitlist-role-picker {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .waitlist-minimal__note {
     margin-top: 30px;

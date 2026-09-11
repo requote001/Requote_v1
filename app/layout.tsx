@@ -13,11 +13,11 @@ const siteUrl = new URL(
 export const metadata: Metadata = {
   metadataBase: siteUrl,
   title: {
-    default: "Requote | Post Requests and Compare Trusted Offers",
+    default: "Requote | Clearer Work, Teams, and Opportunity",
     template: "%s | Requote",
   },
   description:
-    "Post what you need, compare offers from capable providers, and manage clearer, protected transactions from agreement through delivery with Requote.",
+    "Requote connects clients, providers, employers, professionals, and investors through clearer work opportunities and trusted transactions.",
   keywords: [
     "Requote",
     "request marketplace",
@@ -25,6 +25,9 @@ export const metadata: Metadata = {
     "compare offers",
     "protected payments",
     "skilled professionals",
+    "employers Nigeria",
+    "jobs and career opportunities",
+    "investment opportunities Nigeria",
     "Nigerian marketplace",
   ],
   authors: [{ name: "Requote" }],
@@ -51,23 +54,23 @@ export const metadata: Metadata = {
     locale: "en_NG",
     url: "/",
     siteName: "Requote",
-    title: "Requote | Tell Us What You Need. Get Trusted Offers.",
+    title: "Requote | Clearer Work, Teams, and Opportunity.",
     description:
-      "Post what you need, compare offers from capable providers, and manage clearer, protected transactions from agreement through delivery.",
+      "A clearer network for clients, providers, employers, professionals, and investors.",
     images: [
       {
         url: "/requote-social-card.png",
         width: 1200,
         height: 630,
-        alt: "Requote — tell us what you need and get trusted offers.",
+        alt: "Requote — clearer work, teams, and opportunity.",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Requote | Tell Us What You Need. Get Trusted Offers.",
+    title: "Requote | Clearer Work, Teams, and Opportunity.",
     description:
-      "Post what you need, compare capable providers, and manage clearer, protected transactions through Requote.",
+      "A clearer network for clients, providers, employers, professionals, and investors.",
     images: ["/requote-social-card.png"],
   },
   robots: {
@@ -113,7 +116,8 @@ const structuredData = {
       "@id": "https://requote.cc/#website",
       url: "https://requote.cc/",
       name: "Requote",
-      description: "A request-and-offer marketplace for products and services.",
+      description:
+        "A growing work network for clients, providers, employers, professionals, and investors.",
       publisher: { "@id": "https://requote.cc/#organization" },
       inLanguage: "en-NG",
     },

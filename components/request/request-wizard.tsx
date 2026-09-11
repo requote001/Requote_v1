@@ -56,6 +56,43 @@ const logisticsOptions: {
   },
 ];
 
+const entryPaths = [
+  {
+    audience: "Client",
+    title: "I need a product or service",
+    copy: "Turn a clear need into a request that capable providers can understand.",
+    action: "Start a request",
+  },
+  {
+    audience: "Provider",
+    title: "I offer products or services",
+    copy: "Join early to find clearer, more relevant work opportunities.",
+    action: "Join as a provider",
+    href: "/waitlist?role=provider&source=request-entry",
+  },
+  {
+    audience: "Employer",
+    title: "I want to build a team",
+    copy: "Tell us the roles and talent needs you want Requote to support.",
+    action: "Join as an employer",
+    href: "/waitlist?role=employer&source=request-entry",
+  },
+  {
+    audience: "Professional",
+    title: "I am looking for meaningful work",
+    copy: "Share your career area and help shape the opportunities we open first.",
+    action: "Join as a professional",
+    href: "/waitlist?role=employee&source=request-entry",
+  },
+  {
+    audience: "Investor",
+    title: "I want to explore Requote’s growth",
+    copy: "Join the early investor and strategic-partner conversation.",
+    action: "Join as an investor",
+    href: "/waitlist?role=investor&source=request-entry",
+  },
+];
+
 function getStepErrors(step: number, request: RequoteRequest) {
   if (step === 0) {
     if (request.title.trim().length < 6) {
@@ -98,8 +135,17 @@ function formatBudget(request: RequoteRequest) {
   return minimum ? "From ₦" + minimum : "Up to ₦" + maximum;
 }
 
-export function RequestWizard() {
+type RequestWizardProps = {
+  startInRequestFlow?: boolean;
+};
+
+export function RequestWizard({
+  startInRequestFlow = false,
+}: RequestWizardProps) {
   const router = useRouter();
+  const [showJourneyChooser, setShowJourneyChooser] = useState(
+    !startInRequestFlow,
+  );
   const [request, setRequest] = useState<RequoteRequest>(initialRequest);
   const [step, setStep] = useState(0);
   const [hydrated, setHydrated] = useState(false);
@@ -172,6 +218,66 @@ export function RequestWizard() {
     storePendingRequest(submission);
     router.push(
       "/waitlist?role=requester&source=request-flow&intent=" + status,
+    );
+  }
+
+  if (showJourneyChooser) {
+    return (
+      <section
+        className="request-gateway"
+        aria-labelledby="request-gateway-title"
+      >
+        <div className="request-gateway__copy">
+          <p className="product-kicker">Choose your path</p>
+          <h1 id="request-gateway-title">What brings you to Requote?</h1>
+          <p>
+            Requote is growing beyond requests and offers. Begin with the path
+            that best describes what you want to make possible.
+          </p>
+          <div className="request-gateway__note">
+            <span aria-hidden="true">✦</span>
+            <p>
+              Client requests are available to shape today. The other paths are
+              collecting early-access interest as the network expands.
+            </p>
+          </div>
+        </div>
+
+        <div className="request-gateway__paths">
+          {entryPaths.map((path, index) =>
+            path.href ? (
+              <a
+                className="request-gateway__path"
+                href={path.href}
+                key={path.audience}
+              >
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <div>
+                  <small>{path.audience}</small>
+                  <strong>{path.title}</strong>
+                  <p>{path.copy}</p>
+                </div>
+                <b>{path.action} →</b>
+              </a>
+            ) : (
+              <button
+                className="request-gateway__path"
+                type="button"
+                onClick={() => setShowJourneyChooser(false)}
+                key={path.audience}
+              >
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <div>
+                  <small>{path.audience}</small>
+                  <strong>{path.title}</strong>
+                  <p>{path.copy}</p>
+                </div>
+                <b>{path.action} →</b>
+              </button>
+            ),
+          )}
+        </div>
+      </section>
     );
   }
 
