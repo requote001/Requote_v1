@@ -454,10 +454,6 @@ function App() {
 
             <div className="audience-paths__signal">
               <div className="audience-paths__signal-copy">
-                <div className="audience-paths__signal-label">
-                  <span>01</span>
-                  <strong>Start with context</strong>
-                </div>
                 <h3>One network. A clearer next move.</h3>
                 <p>
                   The best connections begin when everyone understands the

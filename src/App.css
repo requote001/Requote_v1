@@ -1953,26 +1953,6 @@ section[id] {
   max-width: 570px;
   padding: 48px 48px 44px;
 }
-.audience-paths__signal-label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 36px;
-  color: #bfd1ff;
-  font: 700 11px/16px var(--font-ui);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-.audience-paths__signal-label span {
-  display: grid;
-  width: 26px;
-  height: 26px;
-  place-items: center;
-  border: 1px solid rgba(191, 209, 255, 0.36);
-  border-radius: 50%;
-  color: #fff;
-  font-size: 10px;
-}
 .audience-paths__signal-copy h3 {
   max-width: 450px;
   margin: 0;
@@ -2166,9 +2146,6 @@ section[id] {
   .audience-paths__signal-copy {
     padding: 38px 34px 34px;
   }
-  .audience-paths__signal-label {
-    margin-bottom: 26px;
-  }
   .audience-path--featured,
   .audience-path--investor {
     grid-column: span 3;
@@ -2186,9 +2163,6 @@ section[id] {
   }
   .audience-paths__signal-copy {
     padding: 30px 24px 28px;
-  }
-  .audience-paths__signal-label {
-    margin-bottom: 24px;
   }
   .audience-paths__signal-copy h3 {
     font-size: 34px;
