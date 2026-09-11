@@ -493,7 +493,6 @@ function App() {
                 <span className="audience-network__core">
                   <img src="/requote-mark.png" alt="" />
                 </span>
-                <p>More clarity<br />between people.</p>
               </div>
             </div>
 
