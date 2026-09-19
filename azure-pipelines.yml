@@ -1,5 +1,5 @@
-# Node.js CI/CD Pipeline
-# Build, Test, and Publish artifacts for a Node.js project
+# Next.js CI/CD Pipeline — requote-project-v1
+# Build, Lint, Test, and Publish artifacts for a Next.js project
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
 trigger:
@@ -10,7 +10,6 @@ pool:
 
 variables:
   nodeVersion: '20.x'
-  buildConfiguration: 'production'
 
 stages:
 
@@ -21,7 +20,7 @@ stages:
   displayName: 'Build Stage'
   jobs:
   - job: Build
-    displayName: 'Install & Build'
+    displayName: 'Install, Lint & Build'
     steps:
     - task: NodeTool@0
       inputs:
@@ -33,15 +32,19 @@ stages:
       displayName: 'Install dependencies (npm ci)'
 
     - script: |
+        npm run lint
+      displayName: 'Run ESLint'
+
+    - script: |
         npm run build
-      displayName: 'Build project'
+      displayName: 'Build Next.js project'
 
     - task: PublishPipelineArtifact@1
       inputs:
         targetPath: '$(System.DefaultWorkingDirectory)'
         artifact: 'drop'
         publishLocation: 'pipeline'
-      displayName: 'Publish build output as artifact'
+      displayName: 'Publish full build output as artifact'
 
 # ---------------------------------------------------
 # STAGE 2: TEST
@@ -63,10 +66,8 @@ stages:
       displayName: 'Install dependencies'
 
     - script: |
-        npm test -- --ci --reporters=default --reporters=jest-junit
-      displayName: 'Run tests'
-      env:
-        JEST_JUNIT_OUTPUT_DIR: './test-results'
+        npm test
+      displayName: 'Run Vitest'
 
     - task: PublishTestResults@2
       inputs:
@@ -84,7 +85,7 @@ stages:
       condition: succeededOrFailed()
 
 # ---------------------------------------------------
-# STAGE 3: PUBLISH ARTIFACT (packaged for release)
+# STAGE 3: PUBLISH RELEASE ARTIFACT
 # ---------------------------------------------------
 - stage: PublishArtifact
   displayName: 'Publish Release Artifact'
@@ -102,14 +103,16 @@ stages:
     - script: |
         npm ci
         npm run build
+      displayName: 'Rebuild for packaging'
+
     - task: ArchiveFiles@2
       inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/dist'
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/app-$(Build.BuildId).zip'
         replaceExistingArchive: true
-      displayName: 'Archive build output'
+      displayName: 'Archive build output (.next, public, package.json, etc.)'
 
     - task: PublishBuildArtifacts@1
       inputs:
@@ -119,7 +122,7 @@ stages:
       displayName: 'Publish zipped release artifact'
 
 # ---------------------------------------------------
-# STAGE 4: DEPLOY (placeholder — fill in your target)
+# STAGE 4: DEPLOY (placeholder)
 # ---------------------------------------------------
 - stage: Deploy
   displayName: 'Deploy Stage'
@@ -133,5 +136,5 @@ stages:
       runOnce:
         deploy:
           steps:
-          - script: echo "Add your deployment steps here (Azure Web App, Kubernetes, etc.)"
+          - script: echo "Add your deployment steps here (Vercel, Azure Web App, etc.)"
             displayName: 'Deploy placeholder'
