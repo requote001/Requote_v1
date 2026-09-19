@@ -1,6 +1,5 @@
-# Node.js
-# Build a general Node.js project with npm.
-# Add steps that analyze code, save build artifacts, deploy, and more:
+# Node.js CI/CD Pipeline
+# Build, Test, and Publish artifacts for a Node.js project
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
 trigger:
@@ -9,13 +8,130 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '20.x'
-  displayName: 'Install Node.js'
+variables:
+  nodeVersion: '20.x'
+  buildConfiguration: 'production'
 
-- script: |
-    npm install
-    npm run build
-  displayName: 'npm install and build'
+stages:
+
+# ---------------------------------------------------
+# STAGE 1: BUILD
+# ---------------------------------------------------
+- stage: Build
+  displayName: 'Build Stage'
+  jobs:
+  - job: Build
+    displayName: 'Install & Build'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: $(nodeVersion)
+      displayName: 'Install Node.js'
+
+    - script: |
+        npm ci
+      displayName: 'Install dependencies (npm ci)'
+
+    - script: |
+        npm run build
+      displayName: 'Build project'
+
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(System.DefaultWorkingDirectory)'
+        artifact: 'drop'
+        publishLocation: 'pipeline'
+      displayName: 'Publish build output as artifact'
+
+# ---------------------------------------------------
+# STAGE 2: TEST
+# ---------------------------------------------------
+- stage: Test
+  displayName: 'Test Stage'
+  dependsOn: Build
+  jobs:
+  - job: Test
+    displayName: 'Run Unit & Coverage Tests'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: $(nodeVersion)
+      displayName: 'Install Node.js'
+
+    - script: |
+        npm ci
+      displayName: 'Install dependencies'
+
+    - script: |
+        npm test -- --ci --reporters=default --reporters=jest-junit
+      displayName: 'Run tests'
+      env:
+        JEST_JUNIT_OUTPUT_DIR: './test-results'
+
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '**/test-results/*.xml'
+        mergeTestResults: true
+        failTaskOnFailedTests: true
+      displayName: 'Publish test results'
+      condition: succeededOrFailed()
+
+    - task: PublishCodeCoverageResults@2
+      inputs:
+        summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml'
+      displayName: 'Publish code coverage'
+      condition: succeededOrFailed()
+
+# ---------------------------------------------------
+# STAGE 3: PUBLISH ARTIFACT (packaged for release)
+# ---------------------------------------------------
+- stage: PublishArtifact
+  displayName: 'Publish Release Artifact'
+  dependsOn: Test
+  condition: succeeded()
+  jobs:
+  - job: Package
+    displayName: 'Package & Publish'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: $(nodeVersion)
+      displayName: 'Install Node.js'
+
+    - script: |
+        npm ci
+        npm run build
+    - task: ArchiveFiles@2
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/dist'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/app-$(Build.BuildId).zip'
+        replaceExistingArchive: true
+      displayName: 'Archive build output'
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'release'
+        publishLocation: 'Container'
+      displayName: 'Publish zipped release artifact'
+
+# ---------------------------------------------------
+# STAGE 4: DEPLOY (placeholder — fill in your target)
+# ---------------------------------------------------
+- stage: Deploy
+  displayName: 'Deploy Stage'
+  dependsOn: PublishArtifact
+  condition: succeeded()
+  jobs:
+  - deployment: Deploy
+    displayName: 'Deploy to Environment'
+    environment: 'production'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - script: echo "Add your deployment steps here (Azure Web App, Kubernetes, etc.)"
+            displayName: 'Deploy placeholder'
