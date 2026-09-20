@@ -582,20 +582,21 @@
   background: #123fae;
 }
 .feed-small-button {
-  min-height: 30px;
-  padding: 0 10px;
-  border: 1px solid #d5e1fb;
-  border-radius: 7px;
-  color: var(--p-blue);
-  background: #f0f4ff;
+  min-height: 27px;
+  padding: 0 9px;
+  border: 1px solid #e1e7f0;
+  border-radius: 6px;
+  color: #687995;
+  background: transparent;
   box-shadow: none;
-  font-size: 0.62rem;
+  font-size: 0.58rem;
+  font-weight: 700;
 }
 .feed-small-button:hover,
 .feed-small-button:focus-visible {
-  border-color: #123fae;
-  color: #fff;
-  background: #1950d2;
+  border-color: #c8d7f5;
+  color: var(--p-blue);
+  background: #f5f8ff;
 }
 .feed-composer {
   padding: 15px 17px 0;
