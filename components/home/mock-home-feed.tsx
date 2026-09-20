@@ -49,6 +49,7 @@ export function MockHomeFeed({ profileMode }: MockHomeFeedProps) {
   const [ready, setReady] = useState(false);
   const [role, setRole] = useState("Client");
   const [profileComplete, setProfileComplete] = useState(false);
+  const [fatimaFollowed, setFatimaFollowed] = useState(false);
   const [notice, setNotice] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -150,7 +151,6 @@ export function MockHomeFeed({ profileMode }: MockHomeFeedProps) {
 
   const memberName = member.name || "Requote member";
   const firstName = memberName.split(" ")[0];
-  const linkedinSlug = memberName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
   return (
     <div className="feed-app">
@@ -241,13 +241,6 @@ export function MockHomeFeed({ profileMode }: MockHomeFeedProps) {
                 <small className="feed-profile-label">YOUR PROFILE</small>
                 <strong>{memberName}</strong>
                 <span className="feed-profile-meta">{role} · Lagos, Nigeria</span>
-                <button
-                  className="feed-profile-link"
-                  type="button"
-                  onClick={() => handleNav("Profile")}
-                >
-                  <span>in</span> LinkedIn · /in/{linkedinSlug}
-                </button>
                 <button type="button" onClick={() => handleNav("Profile")}>
                   View your profile <b>→</b>
                 </button>
@@ -340,7 +333,7 @@ export function MockHomeFeed({ profileMode }: MockHomeFeedProps) {
               </header>
               <h2>Structural steel partitioning with a finish designed for everyday use.</h2>
               <div className="feed-sample-visual"><span>Commercial interior fit-out</span><strong>Built for the brief.</strong><small>Preview work sample · scope and delivery details stay attached.</small></div>
-              <footer className="feed-card__footer"><button className="feed-small-button" type="button" onClick={() => showNotice("Work sample preview opened for the next milestone.")}>View work sample</button><button type="button" onClick={() => showNotice("Follow actions will be connected soon.")}>Follow Fatima</button></footer>
+              <footer className="feed-card__footer"><button className="feed-small-button" type="button" onClick={() => showNotice("Work sample preview opened for the next milestone.")}>View work sample</button><button className={"feed-follow-button " + (fatimaFollowed ? "is-following" : "")} type="button" aria-pressed={fatimaFollowed} onClick={() => { const nextValue = !fatimaFollowed; setFatimaFollowed(nextValue); showNotice(nextValue ? "You are now following Fatima." : "You unfollowed Fatima."); }}>{fatimaFollowed ? "Following" : "Follow Fatima"}</button></footer>
             </article>
 
             <article className="feed-card">

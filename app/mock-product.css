@@ -155,7 +155,7 @@
   min-height: 100svh;
   color: #18243c;
   background: #f5f7fb;
-  font-family: var(--font-heading);
+  font-family: var(--font-ui);
 }
 .feed-app button,
 .feed-app input,
@@ -419,53 +419,6 @@
   color: #718097 !important;
   font-size: 0.63rem !important;
 }
-.feed-profile-link {
-  display: flex !important;
-  align-items: center;
-  justify-content: flex-start !important;
-  gap: 6px;
-  margin-top: 1px !important;
-  color: #667792 !important;
-  font-size: 0.62rem !important;
-  font-weight: 600 !important;
-  white-space: nowrap;
-}
-.feed-profile-link:hover,
-.feed-profile-link:focus-visible {
-  color: var(--p-blue) !important;
-}
-.feed-profile-link > span {
-  width: 16px;
-  height: 16px;
-  display: inline-grid;
-  place-items: center;
-  border-radius: 3px;
-  color: #fff;
-  background: #2867b2;
-  font-family: Arial, sans-serif;
-  font-size: 0.62rem;
-  font-weight: 800;
-}
-.feed-profile-complete {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  margin: 5px 0 2px;
-  color: #167a50;
-  font-size: 0.63rem;
-  font-weight: 800;
-}
-.feed-profile-complete span,
-.feed-complete-badge span {
-  width: 17px;
-  height: 17px;
-  display: inline-grid;
-  place-items: center;
-  border-radius: 50%;
-  color: #fff;
-  background: #16845b;
-  font-size: 0.65rem;
-}
 .feed-profile-card > button,
 .feed-setup-card > button {
   display: flex;
@@ -593,6 +546,8 @@
 .feed-welcome h1 {
   margin: 0;
   color: #152542;
+  font-family: var(--font-heading);
+  font-weight: 700;
   font-size: clamp(1.45rem, 2.4vw, 2.05rem);
   letter-spacing: -0.045em;
 }
@@ -625,6 +580,22 @@
 .feed-small-button:hover,
 .feed-small-button:focus-visible {
   background: #123fae;
+}
+.feed-small-button {
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid #d5e1fb;
+  border-radius: 7px;
+  color: var(--p-blue);
+  background: #f0f4ff;
+  box-shadow: none;
+  font-size: 0.62rem;
+}
+.feed-small-button:hover,
+.feed-small-button:focus-visible {
+  border-color: #123fae;
+  color: #fff;
+  background: #1950d2;
 }
 .feed-composer {
   padding: 15px 17px 0;
@@ -766,6 +737,8 @@
 .feed-card h2 {
   margin: 15px 0 8px;
   color: #142442;
+  font-family: var(--font-heading);
+  font-weight: 700;
   font-size: 0.94rem;
   line-height: 1.35;
   letter-spacing: -0.02em;
@@ -802,6 +775,28 @@
   background: transparent;
   font-size: 0.65rem;
   cursor: pointer;
+}
+.feed-card__footer > .feed-follow-button {
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid #d5e1fb;
+  border-radius: 7px;
+  color: var(--p-blue);
+  background: #fff;
+  font-family: var(--font-ui);
+  font-size: 0.62rem;
+  font-weight: 800;
+}
+.feed-card__footer > .feed-follow-button:hover,
+.feed-card__footer > .feed-follow-button:focus-visible {
+  border-color: var(--p-blue);
+  color: var(--p-blue);
+  background: #f0f4ff;
+}
+.feed-card__footer > .feed-follow-button.is-following {
+  border-color: #bfe3d0;
+  color: #167a50;
+  background: #e9f7f0;
 }
 .feed-card__quiet {
   margin-left: auto;
@@ -916,6 +911,8 @@
 .feed-right-card h2 {
   margin: 0;
   color: #1b2b47;
+  font-family: var(--font-heading);
+  font-weight: 700;
   font-size: 0.85rem;
 }
 .feed-right-card p {
@@ -923,24 +920,6 @@
   color: #8190a5;
   font-size: 0.65rem;
   line-height: 1.45;
-}
-.feed-setup-card--complete {
-  border-color: #cde8dc;
-  background: #fbfefc;
-}
-.feed-setup-card--complete .feed-right-card__heading b {
-  color: #16845b;
-}
-.feed-complete-badge {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 9px;
-  border-radius: 7px;
-  color: #167a50;
-  background: #e9f7f0;
-  font-size: 0.62rem;
-  font-weight: 800;
 }
 .feed-suggestion {
   display: flex;
@@ -1033,7 +1012,7 @@
   background: #12203d;
 }
 .feed-trust-card > small { color: #99b9ff; }
-.feed-trust-card h2 { margin: 0; font-size: 0.95rem; }
+.feed-trust-card h2 { margin: 0; font-family: var(--font-heading); font-size: 0.95rem; }
 .feed-trust-card p { color: #c1cce0; }
 .feed-trust-card a { color: #9dbbff; }
 .feed-toast {
