@@ -41,7 +41,7 @@ function Pill({ children, tone = "blue" }: { children: React.ReactNode; tone?: s
 }
 
 type MockHomeFeedProps = {
-  profileMode: "complete" | "incomplete";
+  profileMode?: "complete" | "incomplete";
 };
 
 export function MockHomeFeed({ profileMode }: MockHomeFeedProps) {
@@ -74,7 +74,13 @@ export function MockHomeFeed({ profileMode }: MockHomeFeedProps) {
         }
         setMember(parsed);
         setRole(parsed.role || "Client");
-        setProfileComplete(profileMode === "complete");
+        setProfileComplete(
+          profileMode === "complete"
+            ? true
+            : profileMode === "incomplete"
+              ? false
+              : parsed.profileComplete ?? true,
+        );
         setReady(true);
       } catch {
         window.location.replace("/login?next=/home");
@@ -115,27 +121,6 @@ export function MockHomeFeed({ profileMode }: MockHomeFeedProps) {
     if (noticeTimerRef.current) window.clearTimeout(noticeTimerRef.current);
     setNotice(message);
     noticeTimerRef.current = window.setTimeout(() => setNotice(""), 3600);
-  }
-
-  function updateProfileCompletion(nextValue: boolean) {
-    setProfileComplete(nextValue);
-    const stored = window.localStorage.getItem("requote_mock_auth");
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as MockMember;
-        window.localStorage.setItem(
-          "requote_mock_auth",
-          JSON.stringify({ ...parsed, profileComplete: nextValue }),
-        );
-      } catch {
-        // The preview can still show the state even if local storage is unavailable.
-      }
-    }
-    showNotice(
-      nextValue
-        ? "Profile completed in this preview state."
-        : "Profile setup reopened in this preview state.",
-    );
   }
 
   function updateRole(nextRole: string) {
@@ -308,7 +293,7 @@ export function MockHomeFeed({ profileMode }: MockHomeFeedProps) {
                 <span>{member.email || "Requote member"}</span>
                 <div className="feed-progress"><span style={{ width: "42%" }} /></div>
                 <small>Profile setup 42%</small>
-                <button type="button" onClick={() => updateProfileCompletion(true)}>
+                <button type="button" onClick={() => window.location.assign("/account-setup?return=/home")}>
                   Complete profile <b>→</b>
                 </button>
               </>
@@ -416,7 +401,7 @@ export function MockHomeFeed({ profileMode }: MockHomeFeedProps) {
               <h2>Complete your profile</h2>
               <p>Add a photo, your location, and the work you want to be known for.</p>
               <div className="feed-progress"><span style={{ width: "42%" }} /></div>
-              <button type="button" onClick={() => updateProfileCompletion(true)}>Continue setup <span>→</span></button>
+              <button type="button" onClick={() => window.location.assign("/account-setup?return=/home")}>Continue setup <span>→</span></button>
             </section>
           )}
 
@@ -431,7 +416,7 @@ export function MockHomeFeed({ profileMode }: MockHomeFeedProps) {
             <button className="feed-mini-request" type="button" onClick={() => showNotice("Request preview opened for the next milestone.")}><span>Web &amp; software</span><strong>E-commerce UI for Shopify store</strong><small>Remote · 2 weeks · View →</small></button>
           </section>
 
-          <section className="feed-right-card feed-next-card"><div className="feed-right-card__heading"><small>YOUR NEXT ACTIONS</small></div><button type="button" onClick={() => showNotice("Action details will be connected soon.")}><i>•</i><span><strong>Finish your profile</strong><small>Add what you do and where you work.</small></span></button><button type="button" onClick={() => showNotice("Saved request actions will be connected soon.")}><i>•</i><span><strong>Save a request</strong><small>Keep a brief ready for the right moment.</small></span></button></section>
+          <section className="feed-right-card feed-next-card"><div className="feed-right-card__heading"><small>YOUR NEXT ACTIONS</small></div><button type="button" onClick={() => window.location.assign("/account-setup?return=/home")}><i>•</i><span><strong>Finish your profile</strong><small>Add what you do and where you work.</small></span></button><button type="button" onClick={() => showNotice("Saved request actions will be connected soon.")}><i>•</i><span><strong>Save a request</strong><small>Keep a brief ready for the right moment.</small></span></button></section>
 
           <section className="feed-trust-card"><small>REQUOTE PRINCIPLE</small><h2>Context before momentum.</h2><p>A better work network starts with people seeing the same brief.</p><Link href="/trust-safety">Learn how Requote works →</Link></section>
         </aside>

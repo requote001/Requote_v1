@@ -13,7 +13,7 @@ type HomeFeedPageProps = {
 
 export default async function HomeFeedPage({ searchParams }: HomeFeedPageProps) {
   const { profile } = await searchParams;
-  const profileMode = profile === "true" ? "incomplete" : "complete";
+  const profileMode = profile === "true" ? "incomplete" : profile === "false" ? "complete" : undefined;
 
   return <MockHomeFeed profileMode={profileMode} />;
 }

@@ -8,6 +8,12 @@ type MockMember = {
   name?: string;
   email?: string;
   role?: string;
+  profileComplete?: boolean;
+  location?: string;
+  headline?: string;
+  about?: string;
+  isAvailable?: boolean;
+  publicProfile?: boolean;
 };
 
 type ProfileTab = "Overview" | "Work" | "Activity";
@@ -53,6 +59,7 @@ export function MyProfile() {
   const [ready, setReady] = useState(false);
   const [activeTab, setActiveTab] = useState<ProfileTab>("Overview");
   const [role, setRole] = useState("Client");
+  const [profileComplete, setProfileComplete] = useState(true);
   const [isPublic, setIsPublic] = useState(true);
   const [isAvailable, setIsAvailable] = useState(true);
   const [notice, setNotice] = useState("");
@@ -74,6 +81,9 @@ export function MyProfile() {
         }
         setMember(parsed);
         setRole(parsed.role || "Client");
+        setProfileComplete(parsed.profileComplete ?? true);
+        setIsAvailable(parsed.isAvailable ?? true);
+        setIsPublic(parsed.publicProfile ?? true);
         setReady(true);
       } catch {
         window.location.replace("/login?next=/profile");
@@ -114,6 +124,8 @@ export function MyProfile() {
 
   const memberName = member.name || "Requote member";
   const focus = roleFocus(role);
+  const memberLocation = member.location || "Add your location";
+  const profileIntro = member.about || member.headline || "This is the public context people use to understand how to work with you. You stay in control of what is shared.";
 
   return (
     <div className="my-profile-page">
@@ -144,15 +156,16 @@ export function MyProfile() {
             <div className="my-profile-hero__identity">
               <p>Your Requote profile</p>
               <h1 id="my-profile-title">{memberName}</h1>
-              <div className="my-profile-hero__meta"><span>{role}</span><span>Lagos, Nigeria</span><span>{isAvailable ? "Open to relevant opportunities" : "Availability paused"}</span></div>
-              <p className="my-profile-hero__intro">This is the public context people use to understand how to work with you. You stay in control of what is shared.</p>
+              <div className="my-profile-hero__meta"><span>{member.headline || role}</span><span>{memberLocation}</span><span>{isAvailable ? "Open to relevant opportunities" : "Availability paused"}</span></div>
+              <p className="my-profile-hero__intro">{profileIntro}</p>
             </div>
             <div className="my-profile-hero__actions">
-              <button type="button" onClick={() => showNotice("Profile editing will be connected in the next account milestone.")}>Edit profile</button>
-              <button type="button" onClick={() => showNotice("Your shareable profile link is ready in the production flow.")}>Share profile</button>
+              {profileComplete ? <><button type="button" onClick={() => showNotice("Profile editing will be connected in the next account milestone.")}>Edit profile</button><button type="button" onClick={() => showNotice("Your shareable profile link is ready in the production flow.")}>Share profile</button></> : <Link href="/account-setup?return=/profile">Continue setup <span>→</span></Link>}
             </div>
           </div>
         </section>
+
+        {!profileComplete && <section className="my-profile-setup-banner"><div><small>ACCOUNT SETUP IN PROGRESS</small><strong>Finish a few details to make your profile ready to share.</strong><p>Add your location, role context, and visibility preferences. You can change them later.</p></div><Link href="/account-setup?return=/profile">Continue setup <span>→</span></Link></section>}
 
         <div className="my-profile-layout">
           <div className="my-profile-main">
@@ -213,10 +226,10 @@ export function MyProfile() {
 
           <aside className="my-profile-sidebar" aria-label="Profile guidance">
             <section className="my-profile-side-card my-profile-side-card--status">
-              <p>PROFILE STATUS</p><h2>Ready to share</h2><span>Your core details are in place. Add work when it helps people understand your fit.</span><div className="my-profile-progress"><span /></div><small>Core profile complete</small>
+              <p>PROFILE STATUS</p><h2>{profileComplete ? "Ready to share" : "Setup in progress"}</h2><span>{profileComplete ? "Your core details are in place. Add work when it helps people understand your fit." : "Add the essentials so people have enough context to begin the right conversation."}</span><div className="my-profile-progress"><span style={{ width: profileComplete ? "100%" : "42%" }} /></div><small>{profileComplete ? "Core profile complete" : "2 of 4 setup steps"}</small>
             </section>
             <section className="my-profile-side-card">
-              <p>NEXT STEPS</p><ul><li><button type="button" onClick={() => setActiveTab("Work")}>Add a work sample <b>→</b></button></li><li><button type="button" onClick={() => setIsAvailable(true)}>Confirm availability <b>→</b></button></li><li><Link href={requestHref}>Post a clear request <b>→</b></Link></li></ul>
+              <p>NEXT STEPS</p><ul>{!profileComplete && <li><Link href="/account-setup?return=/profile">Finish account setup <b>→</b></Link></li>}<li><button type="button" onClick={() => setActiveTab("Work")}>Add a work sample <b>→</b></button></li><li><button type="button" onClick={() => setIsAvailable(true)}>Confirm availability <b>→</b></button></li><li><Link href={requestHref}>Post a clear request <b>→</b></Link></li></ul>
             </section>
             <section className="my-profile-side-note"><span>✦</span><p>Contact details stay private. Requote is designed to start conversations with the right context.</p></section>
           </aside>

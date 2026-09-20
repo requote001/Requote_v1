@@ -42,6 +42,7 @@ export function MockAuthForm({ mode, nextPath }: MockAuthFormProps) {
         name: name || "Requote member",
         email: address,
         role: selectedRole,
+        profileComplete: isSignup ? false : true,
       }),
     );
     window.location.assign(safeNextPath(nextPath));
