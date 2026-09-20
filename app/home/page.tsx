@@ -7,6 +7,13 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function HomeFeedPage() {
-  return <MockHomeFeed />;
+type HomeFeedPageProps = {
+  searchParams: Promise<{ profile?: string }>;
+};
+
+export default async function HomeFeedPage({ searchParams }: HomeFeedPageProps) {
+  const { profile } = await searchParams;
+  const profileMode = profile === "true" ? "incomplete" : "complete";
+
+  return <MockHomeFeed profileMode={profileMode} />;
 }

@@ -137,10 +137,14 @@ function formatBudget(request: RequoteRequest) {
 
 type RequestWizardProps = {
   startInRequestFlow?: boolean;
+  inAppFlow?: boolean;
+  cancelHref?: string;
 };
 
 export function RequestWizard({
   startInRequestFlow = false,
+  inAppFlow = false,
+  cancelHref = "/",
 }: RequestWizardProps) {
   const router = useRouter();
   const [showJourneyChooser, setShowJourneyChooser] = useState(
@@ -216,6 +220,17 @@ export function RequestWizard({
     setSubmitting(status);
     setError("");
     storePendingRequest(submission);
+    if (inAppFlow) {
+      router.push(
+        "/post-a-request/complete?id=" +
+          Date.now().toString(36) +
+          "&status=" +
+          status +
+          "&source=home",
+      );
+      return;
+    }
+
     router.push(
       "/waitlist?role=requester&source=request-flow&intent=" + status,
     );
@@ -716,7 +731,7 @@ export function RequestWizard({
                 Back
               </button>
             ) : (
-              <a className="product-link-button" href="/">
+              <a className="product-link-button" href={cancelHref}>
                 Cancel
               </a>
             )}

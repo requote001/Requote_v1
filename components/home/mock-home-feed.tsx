@@ -21,6 +21,7 @@ const navItems = [
 ] as const;
 
 const roleOptions = ["Client", "Provider", "Employer", "Professional", "Investor"];
+const requestHref = "/post-a-request?journey=request&source=home";
 
 function initials(name: string) {
   return name
@@ -39,7 +40,11 @@ function Pill({ children, tone = "blue" }: { children: React.ReactNode; tone?: s
   return <span className={`feed-pill feed-pill--${tone}`}>{children}</span>;
 }
 
-export function MockHomeFeed() {
+type MockHomeFeedProps = {
+  profileMode: "complete" | "incomplete";
+};
+
+export function MockHomeFeed({ profileMode }: MockHomeFeedProps) {
   const [member, setMember] = useState<MockMember | null>(null);
   const [ready, setReady] = useState(false);
   const [role, setRole] = useState("Client");
@@ -66,7 +71,7 @@ export function MockHomeFeed() {
         }
         setMember(parsed);
         setRole(parsed.role || "Client");
-        setProfileComplete(Boolean(parsed.profileComplete));
+        setProfileComplete(profileMode === "complete");
         setReady(true);
       } catch {
         window.location.replace("/login?next=/home");
@@ -74,7 +79,7 @@ export function MockHomeFeed() {
     });
 
     return () => window.cancelAnimationFrame(frame);
-  }, []);
+  }, [profileMode]);
 
   useEffect(() => {
     return () => {
@@ -133,7 +138,7 @@ export function MockHomeFeed() {
   function handleNav(label: string) {
     if (label === "Home") return;
     if (label === "Requests") {
-      window.location.assign("/post-a-request");
+      window.location.assign(requestHref);
       return;
     }
     showNotice(`${label} is part of the next product build milestone.`);
@@ -153,7 +158,7 @@ export function MockHomeFeed() {
           <Link className="feed-brand" href="/" aria-label="Requote home">
             <img src="/requote-logo.png" alt="Requote" />
           </Link>
-          <div className="feed-search">
+            <div className="feed-search">
             <span aria-hidden="true">⌕</span>
             <input
               ref={searchInputRef}
@@ -278,7 +283,7 @@ export function MockHomeFeed() {
               <h1 id="feed-title">Good morning, {firstName}.</h1>
               <p>Here is what is moving across your network today.</p>
             </div>
-            <Link className="feed-primary-button" href="/post-a-request">Post a request <span>↗</span></Link>
+            <Link className="feed-primary-button" href={requestHref}>Post a request <span>↗</span></Link>
           </div>
 
           <section className="feed-composer" aria-label="Create a post">
@@ -287,7 +292,7 @@ export function MockHomeFeed() {
               <button type="button" onClick={() => showNotice("The post composer will be connected in the next milestone.")}>Share something useful with your network…</button>
             </div>
             <div className="feed-composer__actions">
-              <button type="button" onClick={() => window.location.assign("/post-a-request")}><span className="composer-icon composer-icon--blue">+</span>Post a request</button>
+              <button type="button" onClick={() => window.location.assign(requestHref)}><span className="composer-icon composer-icon--blue">+</span>Post a request</button>
               <button type="button" onClick={() => showNotice("Updates will be available when posting is connected.")}><span className="composer-icon composer-icon--green">▣</span>Share an update</button>
               <button type="button" onClick={() => showNotice("Work samples will be available from your profile.")}><span className="composer-icon composer-icon--orange">▤</span>Add work sample</button>
             </div>

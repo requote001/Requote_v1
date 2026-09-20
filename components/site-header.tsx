@@ -26,9 +26,9 @@ export function SiteHeader({ compact = false }: SiteHeaderProps) {
           </Link>
           <Link
             className="product-primary-button product-primary-button--small"
-            href="/post-a-request"
+            href="/post-a-request?journey=request&source=product"
           >
-            Choose your path
+            Post a request
           </Link>
         </div>
       </div>
