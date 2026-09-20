@@ -53,8 +53,10 @@ export function MockHomeFeed({ profileMode }: MockHomeFeedProps) {
   const [notice, setNotice] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const noticeTimerRef = useRef<number | null>(null);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -87,6 +89,27 @@ export function MockHomeFeed({ profileMode }: MockHomeFeedProps) {
       if (noticeTimerRef.current) window.clearTimeout(noticeTimerRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (!profileMenuOpen) return;
+
+    function closeOnOutsideClick(event: MouseEvent) {
+      if (!profileMenuRef.current?.contains(event.target as Node)) {
+        setProfileMenuOpen(false);
+      }
+    }
+
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") setProfileMenuOpen(false);
+    }
+
+    document.addEventListener("mousedown", closeOnOutsideClick);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("mousedown", closeOnOutsideClick);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [profileMenuOpen]);
 
   function showNotice(message: string) {
     if (noticeTimerRef.current) window.clearTimeout(noticeTimerRef.current);
@@ -207,11 +230,41 @@ export function MockHomeFeed({ profileMode }: MockHomeFeedProps) {
             <button type="button" onClick={() => searchInputRef.current?.focus()}>Search</button>
             <button type="button" onClick={() => showNotice("Messages will appear here as the communication layer is connected.")}>Messages</button>
             <button type="button" onClick={() => showNotice("You have no new notifications in this preview.")}>Notifications</button>
-            <button className="feed-user-button" type="button" onClick={() => showNotice("Profile menu opened in the next pass.")}>
-              <MockAvatar name={memberName} />
-              <span>{firstName}</span>
-              <b aria-hidden="true">⌄</b>
-            </button>
+            <div className="feed-profile-menu" ref={profileMenuRef}>
+              <button
+                className={"feed-user-button " + (profileMenuOpen ? "is-open" : "")}
+                type="button"
+                aria-expanded={profileMenuOpen}
+                aria-haspopup="menu"
+                aria-controls="profile-menu"
+                onClick={() => setProfileMenuOpen((open) => !open)}
+              >
+                <MockAvatar name={memberName} />
+                <span>{firstName}</span>
+                <span className="feed-chevron" aria-hidden="true">⌄</span>
+              </button>
+              {profileMenuOpen && (
+                <div className="feed-profile-dropdown" id="profile-menu" role="menu" aria-label="Profile menu">
+                  <div className="feed-profile-dropdown__identity">
+                    <MockAvatar name={memberName} tone="navy" />
+                    <span><strong>{memberName}</strong><small>{member.email || "Requote member"}</small></span>
+                  </div>
+                  <div className="feed-profile-dropdown__divider" />
+                  <button className="feed-profile-dropdown__item" type="button" role="menuitem" onClick={() => { setProfileMenuOpen(false); handleNav("Profile"); }}>
+                    <span className="feed-profile-dropdown__icon">◎</span>
+                    <span><strong>View profile</strong><small>See your public profile</small></span>
+                    <b aria-hidden="true">→</b>
+                  </button>
+                  <button className="feed-profile-dropdown__item" type="button" role="menuitem" onClick={() => { setProfileMenuOpen(false); showNotice("Settings will be available after account setup."); }}>
+                    <span className="feed-profile-dropdown__icon">⚙</span>
+                    <span><strong>Account settings</strong><small>Manage your preferences</small></span>
+                    <b aria-hidden="true">→</b>
+                  </button>
+                  <div className="feed-profile-dropdown__divider" />
+                  <button className="feed-profile-dropdown__signout" type="button" role="menuitem" onClick={signOut}>Sign out</button>
+                </div>
+              )}
+            </div>
           </nav>
           <button
             className="feed-mobile-toggle"
