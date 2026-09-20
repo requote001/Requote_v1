@@ -2,42 +2,13 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import type { ProfilePlaceholder, ProfileWorkSample } from "@/lib/profile-placeholders";
 
 type ProfileTab = "Overview" | "Work" | "Posts";
 
 const requestHref = "/post-a-request?journey=request&source=home";
 
-const workSamples = [
-  {
-    title: "Commercial steel stair and handrail system",
-    type: "Fabrication · Lagos",
-    note: "Designed for a high-traffic commercial entry with a durable powder-coated finish.",
-    tone: "steel",
-  },
-  {
-    title: "Custom retail display framework",
-    type: "Fit-out · Victoria Island",
-    note: "Modular frame system built to support seasonal merchandising and quick reconfiguration.",
-    tone: "blueprint",
-  },
-] as const;
-
-const profilePosts = [
-  {
-    label: "Shared request",
-    time: "2h ago",
-    title: "Need a professional lead photographer for a 3-day Lagos wedding in November",
-    copy: "Sharing a well-scoped request from the network for providers who may be a strong fit.",
-  },
-  {
-    label: "Project update",
-    time: "Yesterday",
-    title: "What helps a commercial fabrication brief move faster",
-    copy: "Clear dimensions, site context, and the intended finish give a project team a much better place to start.",
-  },
-] as const;
-
-export function ProviderProfile() {
+export function ProviderProfile({ profile }: { profile: ProfilePlaceholder }) {
   const [activeTab, setActiveTab] = useState<ProfileTab>("Overview");
   const [following, setFollowing] = useState(false);
   const [notice, setNotice] = useState("");
@@ -50,7 +21,7 @@ export function ProviderProfile() {
   function toggleFollow() {
     const nextValue = !following;
     setFollowing(nextValue);
-    showNotice(nextValue ? "You are now following Chinedu Works Ltd." : "You unfollowed Chinedu Works Ltd.");
+    showNotice(nextValue ? `You are now following ${profile.name}.` : `You unfollowed ${profile.name}.`);
   }
 
   return (
@@ -74,18 +45,18 @@ export function ProviderProfile() {
 
       <main className="provider-profile-shell">
         <nav className="provider-profile-breadcrumb" aria-label="Breadcrumb">
-          <Link href="/home">Home</Link><span>/</span><span>Provider profile</span>
+          <Link href="/home">Home</Link><span>/</span><span>{profile.profileKind}</span>
         </nav>
 
         <section className="provider-profile-hero" aria-labelledby="provider-profile-name">
           <div className="provider-profile-hero__surface" aria-hidden="true"><span /><span /><span /></div>
           <div className="provider-profile-hero__content">
-            <span className="provider-profile-avatar" aria-hidden="true">CW</span>
+            <span className="provider-profile-avatar" aria-hidden="true">{profile.initials}</span>
             <div className="provider-profile-hero__identity">
-              <p>Provider profile</p>
-              <h1 id="provider-profile-name">Chinedu Works Ltd.</h1>
-              <div className="provider-profile-hero__meta"><span>Fabrication &amp; commercial fit-out</span><span>Lagos, Nigeria</span><span>Availability self-reported</span></div>
-              <p className="provider-profile-hero__intro">A project-focused fabrication team working on commercial metalwork, structural detailing, and practical finishing for spaces that need to perform every day.</p>
+              <p>{profile.profileKind}</p>
+              <h1 id="provider-profile-name">{profile.name}</h1>
+              <div className="provider-profile-hero__meta"><span>{profile.headline}</span><span>{profile.location}</span><span>{profile.availability}</span></div>
+              <p className="provider-profile-hero__intro">{profile.intro}</p>
             </div>
             <div className="provider-profile-hero__actions">
               <button className={"provider-profile-follow " + (following ? "is-following" : "")} type="button" aria-pressed={following} onClick={toggleFollow}>{following ? "Following" : "Follow"}</button>
@@ -96,7 +67,7 @@ export function ProviderProfile() {
         </section>
 
         <div className="provider-profile-layout">
-          <section className="provider-profile-main" aria-label="Chinedu Works profile content">
+          <section className="provider-profile-main" aria-label={`${profile.name} profile content`}>
             <div className="provider-profile-tabs" role="tablist" aria-label="Profile content">
               {(["Overview", "Work", "Posts"] as ProfileTab[]).map((tab) => (
                 <button key={tab} type="button" role="tab" aria-selected={activeTab === tab} className={activeTab === tab ? "is-active" : ""} onClick={() => setActiveTab(tab)}>{tab}</button>
@@ -106,17 +77,17 @@ export function ProviderProfile() {
             {activeTab === "Overview" && (
               <div className="provider-profile-overview">
                 <section className="provider-profile-panel">
-                  <div className="provider-profile-panel__heading"><p>ABOUT</p><h2>Built for briefs that need precision.</h2></div>
-                  <p>Chinedu Works Ltd. supports commercial projects from early fabrication planning through site-ready installation. Their work is organized around clear scope, practical materials, and delivery expectations that teams can coordinate around.</p>
+                  <div className="provider-profile-panel__heading"><p>ABOUT</p><h2>{profile.aboutTitle}</h2></div>
+                  <p>{profile.about}</p>
                 </section>
                 <section className="provider-profile-panel">
                   <div className="provider-profile-panel__heading"><p>SERVICES</p><h2>What they work on</h2></div>
-                  <div className="provider-profile-service-list"><span>Commercial metalwork</span><span>Structural fabrication</span><span>Retail &amp; office fit-out</span><span>Custom handrails &amp; frames</span></div>
+                  <div className="provider-profile-service-list">{profile.services.map((service) => <span key={service}>{service}</span>)}</div>
                 </section>
                 <section className="provider-profile-panel">
                   <div className="provider-profile-panel__heading"><p>SELECTED WORK</p><button type="button" onClick={() => setActiveTab("Work")}>See all work →</button></div>
                   <div className="provider-profile-work-grid">
-                    {workSamples.map((sample) => <WorkCard key={sample.title} sample={sample} onView={() => showNotice("Work sample details will open in the next milestone.")} />)}
+                    {profile.workSamples.map((sample) => <WorkCard key={sample.title} sample={sample} onView={() => showNotice("Work sample details will open in the next milestone.")} />)}
                   </div>
                 </section>
               </div>
@@ -126,31 +97,31 @@ export function ProviderProfile() {
               <section className="provider-profile-panel provider-profile-panel--work">
                 <div className="provider-profile-panel__heading"><p>WORK SAMPLES</p><h2>Recent project context</h2></div>
                 <div className="provider-profile-work-grid">
-                  {workSamples.map((sample) => <WorkCard key={sample.title} sample={sample} onView={() => showNotice("Work sample details will open in the next milestone.")} />)}
+                  {profile.workSamples.map((sample) => <WorkCard key={sample.title} sample={sample} onView={() => showNotice("Work sample details will open in the next milestone.")} />)}
                   <article className="provider-profile-work-empty"><span>+</span><strong>More work coming soon</strong><p>This preview keeps the portfolio focused while more samples are added.</p></article>
                 </div>
               </section>
             )}
 
             {activeTab === "Posts" && (
-              <section className="provider-profile-post-list" aria-label="Chinedu Works posts">
-                {profilePosts.map((post) => (
+              <section className="provider-profile-post-list" aria-label={`${profile.name} posts`}>
+                {profile.posts.length > 0 ? profile.posts.map((post) => (
                   <article className="provider-profile-post-card" key={post.title}>
-                    <header><span className="provider-profile-post-avatar">CW</span><div><strong>Chinedu Works Ltd.</strong><small>{post.time} · {post.label}</small></div></header>
+                    <header><span className="provider-profile-post-avatar">{profile.initials}</span><div><strong>{profile.name}</strong><small>{post.time} · {post.label}</small></div></header>
                     <h2>{post.title}</h2><p>{post.copy}</p>
                     <footer><button type="button" onClick={() => showNotice("Post details will open in the next milestone.")}>View post</button><button type="button" onClick={() => showNotice("Sharing will be available when posts are connected.")}>Share</button></footer>
                   </article>
-                ))}
+                )) : <article className="provider-profile-post-card provider-profile-post-card--empty"><span>✦</span><h2>No public posts yet</h2><p>Public updates will appear here when this member shares them through Requote.</p></article>}
               </section>
             )}
           </section>
 
           <aside className="provider-profile-sidebar" aria-label="Provider details">
             <section className="provider-profile-side-card">
-              <p>WORKING TOGETHER</p><h2>Start with one clear request.</h2><span>Share scope, location, timing, and the outcome you need. Chinedu can respond if the work fits.</span><Link href={requestHref}>Create a request →</Link>
+              <p>WORKING TOGETHER</p><h2>Start with one clear request.</h2><span>Share scope, location, timing, and the outcome you need. {profile.name} can respond if the work fits.</span><Link href={requestHref}>Create a request →</Link>
             </section>
             <section className="provider-profile-side-card">
-              <p>PROFILE DETAILS</p><dl><div><dt>Primary category</dt><dd>Fabrication</dd></div><div><dt>Service area</dt><dd>Lagos and nearby</dd></div><div><dt>Preferred work</dt><dd>Commercial projects</dd></div></dl>
+              <p>PROFILE DETAILS</p><dl><div><dt>Primary category</dt><dd>{profile.category}</dd></div><div><dt>Service area</dt><dd>{profile.serviceArea}</dd></div><div><dt>Preferred work</dt><dd>{profile.preferredWork}</dd></div></dl>
             </section>
             <section className="provider-profile-side-note"><span>✦</span><p>Contact details are kept private. Use a request or message context to start a conversation.</p></section>
           </aside>
@@ -161,6 +132,6 @@ export function ProviderProfile() {
   );
 }
 
-function WorkCard({ sample, onView }: { sample: (typeof workSamples)[number]; onView: () => void }) {
+function WorkCard({ sample, onView }: { sample: ProfileWorkSample; onView: () => void }) {
   return <article className="provider-profile-work-card"><div className={`provider-profile-work-card__visual provider-profile-work-card__visual--${sample.tone}`}><span>{sample.type}</span><strong>Project context, kept clear.</strong></div><div><small>{sample.type}</small><h3>{sample.title}</h3><p>{sample.note}</p><button type="button" onClick={onView}>View work sample</button></div></article>;
 }

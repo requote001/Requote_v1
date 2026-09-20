@@ -380,8 +380,8 @@ export function MockHomeFeed({ profileMode }: MockHomeFeedProps) {
 
             <article className="feed-card feed-card--sample">
               <header className="feed-card__header">
-                <MockAvatar name="Fatima Bello" tone="orange" />
-                <div><strong>Fatima Bello</strong><span>Architectural Metalwork</span><small>4h ago · Work sample</small></div>
+                <Link className="feed-author-avatar-link" href="/profiles/fatima-bello" aria-label="View Fatima Bello profile"><MockAvatar name="Fatima Bello" tone="orange" /></Link>
+                <div><Link className="feed-author-name-link" href="/profiles/fatima-bello">Fatima Bello</Link><span>Architectural Metalwork</span><small>4h ago · Work sample</small></div>
                 <Pill tone="green">Work sample</Pill>
               </header>
               <h2>Structural steel partitioning with a finish designed for everyday use.</h2>
@@ -391,8 +391,8 @@ export function MockHomeFeed({ profileMode }: MockHomeFeedProps) {
 
             <article className="feed-card">
               <header className="feed-card__header">
-                <MockAvatar name="Lagos Build Collective" tone="purple" />
-                <div><strong>Lagos Build Collective</strong><span>Contractor / PM</span><small>Yesterday · Opportunity</small></div>
+                <Link className="feed-author-avatar-link" href="/profiles/lagos-build-collective" aria-label="View Lagos Build Collective profile"><MockAvatar name="Lagos Build Collective" tone="purple" /></Link>
+                <div><Link className="feed-author-name-link" href="/profiles/lagos-build-collective">Lagos Build Collective</Link><span>Contractor / PM</span><small>Yesterday · Opportunity</small></div>
                 <Pill tone="orange">Opportunity</Pill>
               </header>
               <h2>Looking for two certified structural welders for a 4-week commercial warehouse build</h2>
@@ -418,7 +418,7 @@ export function MockHomeFeed({ profileMode }: MockHomeFeedProps) {
 
           <section className="feed-right-card">
             <div className="feed-right-card__heading"><small>PEOPLE TO DISCOVER</small><button type="button" onClick={() => showNotice("Network discovery will be connected soon.")}>See all</button></div>
-            {[['Kelechi Okafor', 'Electrical contracting', 'KO'], ['Tunde Alabi', 'Catering & logistics', 'TA'], ['Bilikisu Sani', 'Agro-supply', 'BS']].map(([name, detail, avatar]) => <div className="feed-suggestion" key={name}><span className="mock-avatar mock-avatar--muted">{avatar}</span><div><strong>{name}</strong><small>{detail}</small></div><button type="button" onClick={() => showNotice(`Follow ${name} will be connected soon.`)}>Follow</button></div>)}
+            {[{ name: "Kelechi Okafor", detail: "Electrical contracting", avatar: "KO", slug: "kelechi-okafor" }, { name: "Tunde Alabi", detail: "Catering & logistics", avatar: "TA", slug: "tunde-alabi" }, { name: "Bilikisu Sani", detail: "Agro-supply", avatar: "BS", slug: "bilikisu-sani" }].map(({ name, detail, avatar, slug }) => <div className="feed-suggestion" key={name}><Link className="feed-author-avatar-link" href={`/profiles/${slug}`} aria-label={`View ${name} profile`}><span className="mock-avatar mock-avatar--muted">{avatar}</span></Link><div><Link className="feed-author-name-link" href={`/profiles/${slug}`}>{name}</Link><small>{detail}</small></div><button type="button" onClick={() => showNotice(`Follow ${name} will be connected soon.`)}>Follow</button></div>)}
           </section>
 
           <section className="feed-right-card">

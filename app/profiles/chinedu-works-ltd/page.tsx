@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ProviderProfile } from "@/components/profile/provider-profile";
+import { getProfilePlaceholder } from "@/lib/profile-placeholders";
 
 export const metadata: Metadata = {
   title: "Chinedu Works Ltd.",
@@ -8,5 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default function ChineduWorksProfilePage() {
-  return <ProviderProfile />;
+  return <ProviderProfile profile={getProfilePlaceholder("chinedu-works-ltd")} />;
 }
