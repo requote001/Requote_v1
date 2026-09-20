@@ -189,6 +189,7 @@
   height: auto;
 }
 .feed-search {
+  position: relative;
   width: min(390px, 100%);
   display: flex;
   align-items: center;
@@ -214,6 +215,79 @@
 }
 .feed-search input::placeholder {
   color: #9aa5b8;
+}
+.feed-search-clear {
+  width: 24px;
+  height: 24px;
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  color: #6b7890;
+  background: transparent;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.feed-search-clear:hover,
+.feed-search-clear:focus-visible {
+  color: var(--p-blue);
+  background: #eaf0ff;
+}
+.feed-search-popover {
+  position: absolute;
+  top: calc(100% + 9px);
+  right: 0;
+  left: 0;
+  z-index: 25;
+  display: grid;
+  gap: 7px;
+  padding: 15px;
+  border: 1px solid #dbe4f2;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 16px 32px rgba(20, 43, 86, 0.14);
+}
+.feed-search-popover::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 22px;
+  width: 9px;
+  height: 9px;
+  border-top: 1px solid #dbe4f2;
+  border-left: 1px solid #dbe4f2;
+  background: #fff;
+  transform: rotate(45deg);
+}
+.feed-search-popover small {
+  color: #8996aa;
+  font-family: var(--font-ui);
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+.feed-search-popover strong {
+  color: #1d2c48;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+}
+.feed-search-popover p {
+  margin: 0;
+  color: #7c899d;
+  font-size: 0.67rem;
+  line-height: 1.45;
+}
+.feed-search-popover button {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  color: var(--p-blue);
+  background: transparent;
+  font-size: 0.66rem;
+  font-weight: 800;
+  cursor: pointer;
 }
 .feed-topnav {
   display: flex;
@@ -332,6 +406,26 @@
 .feed-profile-card > small {
   color: #758198;
   font-size: 0.63rem;
+}
+.feed-profile-complete {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 5px 0 2px;
+  color: #167a50;
+  font-size: 0.63rem;
+  font-weight: 800;
+}
+.feed-profile-complete span,
+.feed-complete-badge span {
+  width: 17px;
+  height: 17px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: #16845b;
+  font-size: 0.65rem;
 }
 .feed-profile-card > button,
 .feed-setup-card > button {
@@ -790,6 +884,24 @@
   color: #8190a5;
   font-size: 0.65rem;
   line-height: 1.45;
+}
+.feed-setup-card--complete {
+  border-color: #cde8dc;
+  background: #fbfefc;
+}
+.feed-setup-card--complete .feed-right-card__heading b {
+  color: #16845b;
+}
+.feed-complete-badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 9px;
+  border-radius: 7px;
+  color: #167a50;
+  background: #e9f7f0;
+  font-size: 0.62rem;
+  font-weight: 800;
 }
 .feed-suggestion {
   display: flex;

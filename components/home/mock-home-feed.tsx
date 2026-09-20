@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type MockMember = {
   authenticated?: boolean;
   name?: string;
   email?: string;
   role?: string;
+  profileComplete?: boolean;
 };
 
 const navItems = [
@@ -42,8 +43,12 @@ export function MockHomeFeed() {
   const [member, setMember] = useState<MockMember | null>(null);
   const [ready, setReady] = useState(false);
   const [role, setRole] = useState("Client");
+  const [profileComplete, setProfileComplete] = useState(false);
   const [notice, setNotice] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const noticeTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -61,6 +66,7 @@ export function MockHomeFeed() {
         }
         setMember(parsed);
         setRole(parsed.role || "Client");
+        setProfileComplete(Boolean(parsed.profileComplete));
         setReady(true);
       } catch {
         window.location.replace("/login?next=/home");
@@ -70,9 +76,53 @@ export function MockHomeFeed() {
     return () => window.cancelAnimationFrame(frame);
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (noticeTimerRef.current) window.clearTimeout(noticeTimerRef.current);
+    };
+  }, []);
+
   function showNotice(message: string) {
+    if (noticeTimerRef.current) window.clearTimeout(noticeTimerRef.current);
     setNotice(message);
-    window.setTimeout(() => setNotice(""), 3600);
+    noticeTimerRef.current = window.setTimeout(() => setNotice(""), 3600);
+  }
+
+  function updateProfileCompletion(nextValue: boolean) {
+    setProfileComplete(nextValue);
+    const stored = window.localStorage.getItem("requote_mock_auth");
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored) as MockMember;
+        window.localStorage.setItem(
+          "requote_mock_auth",
+          JSON.stringify({ ...parsed, profileComplete: nextValue }),
+        );
+      } catch {
+        // The preview can still show the state even if local storage is unavailable.
+      }
+    }
+    showNotice(
+      nextValue
+        ? "Profile completed in this preview state."
+        : "Profile setup reopened in this preview state.",
+    );
+  }
+
+  function updateRole(nextRole: string) {
+    setRole(nextRole);
+    const stored = window.localStorage.getItem("requote_mock_auth");
+    if (!stored) return;
+
+    try {
+      const parsed = JSON.parse(stored) as MockMember;
+      window.localStorage.setItem(
+        "requote_mock_auth",
+        JSON.stringify({ ...parsed, role: nextRole }),
+      );
+    } catch {
+      // Keep the selected role in memory for this preview session.
+    }
   }
 
   function signOut() {
@@ -105,10 +155,50 @@ export function MockHomeFeed() {
           </Link>
           <div className="feed-search">
             <span aria-hidden="true">⌕</span>
-            <input aria-label="Search Requote" placeholder="Search people, requests, and opportunities" />
+            <input
+              ref={searchInputRef}
+              aria-label="Search Requote"
+              aria-controls="feed-search-results"
+              aria-expanded={Boolean(searchQuery.trim())}
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Escape") {
+                  setSearchQuery("");
+                  event.currentTarget.blur();
+                }
+              }}
+              placeholder="Search people, requests, and opportunities"
+            />
+            {searchQuery && (
+              <button
+                className="feed-search-clear"
+                type="button"
+                aria-label="Clear search"
+                onClick={() => {
+                  setSearchQuery("");
+                  searchInputRef.current?.focus();
+                }}
+              >
+                ×
+              </button>
+            )}
+            {searchQuery.trim() && (
+              <div
+                className="feed-search-popover"
+                id="feed-search-results"
+                role="status"
+                aria-live="polite"
+              >
+                <small>SEARCH RESULTS</small>
+                <strong>No results for “{searchQuery.trim()}”</strong>
+                <p>Nothing in this preview matches yet. Try another keyword.</p>
+                <button type="button" onClick={() => setSearchQuery("")}>Clear search</button>
+              </div>
+            )}
           </div>
           <nav className="feed-topnav" aria-label="Account navigation">
-            <button type="button" onClick={() => showNotice("Search is ready for the next feed milestone.")}>Search</button>
+            <button type="button" onClick={() => searchInputRef.current?.focus()}>Search</button>
             <button type="button" onClick={() => showNotice("Messages will appear here as the communication layer is connected.")}>Messages</button>
             <button type="button" onClick={() => showNotice("You have no new notifications in this preview.")}>Notifications</button>
             <button className="feed-user-button" type="button" onClick={() => showNotice("Profile menu opened in the next pass.")}>
@@ -142,9 +232,17 @@ export function MockHomeFeed() {
             <MockAvatar name={memberName} tone="navy" />
             <strong>{memberName}</strong>
             <span>{member.email || "Requote member"}</span>
-            <div className="feed-progress"><span style={{ width: "42%" }} /></div>
-            <small>Profile setup 42%</small>
-            <button type="button" onClick={() => showNotice("Profile setup will open in the next milestone.")}>Continue profile setup <b>→</b></button>
+            {profileComplete ? (
+              <div className="feed-profile-complete"><span>✓</span><small>Profile complete</small></div>
+            ) : (
+              <>
+                <div className="feed-progress"><span style={{ width: "42%" }} /></div>
+                <small>Profile setup 42%</small>
+              </>
+            )}
+            <button type="button" onClick={() => updateProfileCompletion(!profileComplete)}>
+              {profileComplete ? "Reopen profile setup" : "Complete profile"} <b>→</b>
+            </button>
           </section>
 
           <nav className="feed-side-nav" aria-label="Primary workspace navigation">
@@ -165,7 +263,7 @@ export function MockHomeFeed() {
 
           <section className="feed-role-switcher">
             <small>Working as</small>
-            <select value={role} onChange={(event) => setRole(event.target.value)} aria-label="Current Requote role">
+            <select value={role} onChange={(event) => updateRole(event.target.value)} aria-label="Current Requote role">
               {roleOptions.map((option) => <option key={option}>{option}</option>)}
             </select>
             <p>Your feed will adapt as you add roles to your profile.</p>
@@ -242,12 +340,24 @@ export function MockHomeFeed() {
         </main>
 
         <aside className="feed-rightbar" aria-label="Feed support panels">
-          <section className="feed-right-card feed-setup-card">
-            <div className="feed-right-card__heading"><small>ACCOUNT SETUP</small><b>2 of 5</b></div>
-            <h2>Complete your profile</h2>
-            <p>Add a photo, your location, and the work you want to be known for.</p>
-            <div className="feed-progress"><span style={{ width: "42%" }} /></div>
-            <button type="button" onClick={() => showNotice("Profile setup will open in the next milestone.")}>Continue setup <span>→</span></button>
+          <section className={"feed-right-card feed-setup-card " + (profileComplete ? "feed-setup-card--complete" : "")}>
+            {profileComplete ? (
+              <>
+                <div className="feed-right-card__heading"><small>ACCOUNT SETUP</small><b>Complete</b></div>
+                <h2>Your profile is ready</h2>
+                <p>The essentials are in place. Keep refining your profile as your work evolves.</p>
+                <div className="feed-complete-badge"><span>✓</span> Profile setup complete</div>
+                <button type="button" onClick={() => updateProfileCompletion(false)}>Reopen setup <span>↗</span></button>
+              </>
+            ) : (
+              <>
+                <div className="feed-right-card__heading"><small>ACCOUNT SETUP</small><b>2 of 5</b></div>
+                <h2>Complete your profile</h2>
+                <p>Add a photo, your location, and the work you want to be known for.</p>
+                <div className="feed-progress"><span style={{ width: "42%" }} /></div>
+                <button type="button" onClick={() => updateProfileCompletion(true)}>Continue setup <span>→</span></button>
+              </>
+            )}
           </section>
 
           <section className="feed-right-card">
