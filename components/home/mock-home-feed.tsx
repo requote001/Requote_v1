@@ -150,6 +150,7 @@ export function MockHomeFeed({ profileMode }: MockHomeFeedProps) {
 
   const memberName = member.name || "Requote member";
   const firstName = memberName.split(" ")[0];
+  const linkedinSlug = memberName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
   return (
     <div className="feed-app">
@@ -235,19 +236,33 @@ export function MockHomeFeed({ profileMode }: MockHomeFeedProps) {
         <aside className="feed-sidebar" aria-label="Workspace navigation">
           <section className="feed-profile-card">
             <MockAvatar name={memberName} tone="navy" />
-            <strong>{memberName}</strong>
-            <span>{member.email || "Requote member"}</span>
             {profileComplete ? (
-              <div className="feed-profile-complete"><span>✓</span><small>Profile complete</small></div>
+              <>
+                <small className="feed-profile-label">YOUR PROFILE</small>
+                <strong>{memberName}</strong>
+                <span className="feed-profile-meta">{role} · Lagos, Nigeria</span>
+                <button
+                  className="feed-profile-link"
+                  type="button"
+                  onClick={() => handleNav("Profile")}
+                >
+                  <span>in</span> LinkedIn · /in/{linkedinSlug}
+                </button>
+                <button type="button" onClick={() => handleNav("Profile")}>
+                  View your profile <b>→</b>
+                </button>
+              </>
             ) : (
               <>
+                <strong>{memberName}</strong>
+                <span>{member.email || "Requote member"}</span>
                 <div className="feed-progress"><span style={{ width: "42%" }} /></div>
                 <small>Profile setup 42%</small>
+                <button type="button" onClick={() => updateProfileCompletion(true)}>
+                  Complete profile <b>→</b>
+                </button>
               </>
             )}
-            <button type="button" onClick={() => updateProfileCompletion(!profileComplete)}>
-              {profileComplete ? "Reopen profile setup" : "Complete profile"} <b>→</b>
-            </button>
           </section>
 
           <nav className="feed-side-nav" aria-label="Primary workspace navigation">
@@ -345,25 +360,15 @@ export function MockHomeFeed({ profileMode }: MockHomeFeedProps) {
         </main>
 
         <aside className="feed-rightbar" aria-label="Feed support panels">
-          <section className={"feed-right-card feed-setup-card " + (profileComplete ? "feed-setup-card--complete" : "")}>
-            {profileComplete ? (
-              <>
-                <div className="feed-right-card__heading"><small>ACCOUNT SETUP</small><b>Complete</b></div>
-                <h2>Your profile is ready</h2>
-                <p>The essentials are in place. Keep refining your profile as your work evolves.</p>
-                <div className="feed-complete-badge"><span>✓</span> Profile setup complete</div>
-                <button type="button" onClick={() => updateProfileCompletion(false)}>Reopen setup <span>↗</span></button>
-              </>
-            ) : (
-              <>
-                <div className="feed-right-card__heading"><small>ACCOUNT SETUP</small><b>2 of 5</b></div>
-                <h2>Complete your profile</h2>
-                <p>Add a photo, your location, and the work you want to be known for.</p>
-                <div className="feed-progress"><span style={{ width: "42%" }} /></div>
-                <button type="button" onClick={() => updateProfileCompletion(true)}>Continue setup <span>→</span></button>
-              </>
-            )}
-          </section>
+          {!profileComplete && (
+            <section className="feed-right-card feed-setup-card">
+              <div className="feed-right-card__heading"><small>ACCOUNT SETUP</small><b>2 of 5</b></div>
+              <h2>Complete your profile</h2>
+              <p>Add a photo, your location, and the work you want to be known for.</p>
+              <div className="feed-progress"><span style={{ width: "42%" }} /></div>
+              <button type="button" onClick={() => updateProfileCompletion(true)}>Continue setup <span>→</span></button>
+            </section>
+          )}
 
           <section className="feed-right-card">
             <div className="feed-right-card__heading"><small>PEOPLE TO DISCOVER</small><button type="button" onClick={() => showNotice("Network discovery will be connected soon.")}>See all</button></div>

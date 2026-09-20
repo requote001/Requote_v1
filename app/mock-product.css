@@ -407,6 +407,45 @@
   color: #758198;
   font-size: 0.63rem;
 }
+.feed-profile-label {
+  margin-top: 2px;
+  color: #8794a8 !important;
+  font-family: var(--font-ui);
+  font-size: 0.55rem !important;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+.feed-profile-meta {
+  color: #718097 !important;
+  font-size: 0.63rem !important;
+}
+.feed-profile-link {
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-start !important;
+  gap: 6px;
+  margin-top: 1px !important;
+  color: #667792 !important;
+  font-size: 0.62rem !important;
+  font-weight: 600 !important;
+  white-space: nowrap;
+}
+.feed-profile-link:hover,
+.feed-profile-link:focus-visible {
+  color: var(--p-blue) !important;
+}
+.feed-profile-link > span {
+  width: 16px;
+  height: 16px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 3px;
+  color: #fff;
+  background: #2867b2;
+  font-family: Arial, sans-serif;
+  font-size: 0.62rem;
+  font-weight: 800;
+}
 .feed-profile-complete {
   display: flex;
   align-items: center;
