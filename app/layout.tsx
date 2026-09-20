@@ -7,6 +7,7 @@ import "./request.css";
 import "./responsive.css";
 import "./mock-product.css";
 import "./provider-profile.css";
+import "./my-profile.css";
 
 const siteUrl = new URL(
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://requote.cc",

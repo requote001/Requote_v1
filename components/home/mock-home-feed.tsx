@@ -161,6 +161,10 @@ export function MockHomeFeed({ profileMode }: MockHomeFeedProps) {
 
   function handleNav(label: string) {
     if (label === "Home") return;
+    if (label === "Profile") {
+      window.location.assign("/profile");
+      return;
+    }
     if (label === "Requests") {
       window.location.assign(requestHref);
       return;
