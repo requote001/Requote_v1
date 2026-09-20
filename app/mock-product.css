@@ -858,6 +858,11 @@
   font-family: var(--font-ui);
   font-size: 0.71rem;
 }
+.feed-author-avatar-link { display: inline-flex; border-radius: 50%; }
+.feed-author-avatar-link:focus-visible { outline: 3px solid rgba(25, 80, 210, 0.24); outline-offset: 2px; }
+.feed-author-name-link { color: #182641; font-family: var(--font-ui); font-size: 0.71rem; font-weight: 700; text-decoration: none; }
+.feed-author-name-link:hover,
+.feed-author-name-link:focus-visible { color: var(--p-blue); text-decoration: underline; text-underline-offset: 3px; }
 .feed-card__header span:not(.mock-avatar):not(.feed-pill),
 .feed-card__header small {
   color: #8895a8;

@@ -368,8 +368,8 @@ export function MockHomeFeed({ profileMode }: MockHomeFeedProps) {
           <div className="feed-stream">
             <article className="feed-card">
               <header className="feed-card__header">
-                <MockAvatar name="Chinedu Works Ltd" tone="green" />
-                <div><strong>Chinedu Works Ltd.</strong><span>Provider · Lagos</span><small>2h ago · Shared request</small></div>
+                <Link className="feed-author-avatar-link" href="/profiles/chinedu-works-ltd" aria-label="View Chinedu Works Ltd. profile"><MockAvatar name="Chinedu Works Ltd" tone="green" /></Link>
+                <div><Link className="feed-author-name-link" href="/profiles/chinedu-works-ltd">Chinedu Works Ltd.</Link><span>Provider · Lagos</span><small>2h ago · Shared request</small></div>
                 <Pill>Request</Pill>
               </header>
               <h2>Need a professional lead photographer for a 3-day Lagos wedding in November</h2>
