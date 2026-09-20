@@ -289,6 +289,9 @@ function App() {
               Trust &amp; safety
             </a>
             <div className="mobile-nav-actions">
+              <a className="text-button" href="/login">
+                Log in
+              </a>
               <a className="text-button" href={earlyAccessLink}>
                 Join waitlist
               </a>
@@ -298,6 +301,9 @@ function App() {
             </div>
           </nav>
           <div className="topbar__actions">
+            <a className="text-button" href="/login">
+              Log in
+            </a>
             <a className="text-button" href={earlyAccessLink}>
               Join waitlist
             </a>
