@@ -770,16 +770,24 @@
   margin-top: 15px;
 }
 .feed-card__footer > button:not(.feed-small-button) {
-  padding: 0;
-  border: 0;
+  min-height: 27px;
+  padding: 0 9px;
+  border: 1px solid #e1e7f0;
+  border-radius: 6px;
   color: #75839a;
   background: transparent;
   font-size: 0.65rem;
   cursor: pointer;
 }
+.feed-card__footer > button:not(.feed-small-button):hover,
+.feed-card__footer > button:not(.feed-small-button):focus-visible {
+  border-color: #c8d7f5;
+  color: var(--p-blue);
+  background: #f5f8ff;
+}
 .feed-card__footer > .feed-follow-button {
   min-height: 30px;
-  padding: 0 10px;
+  padding: 0 11px;
   border: 1px solid #d5e1fb;
   border-radius: 7px;
   color: var(--p-blue);
@@ -787,9 +795,11 @@
   font-family: var(--font-ui);
   font-size: 0.62rem;
   font-weight: 800;
+  transition: padding 160ms ease, background-color 160ms ease, border-color 160ms ease;
 }
 .feed-card__footer > .feed-follow-button:hover,
 .feed-card__footer > .feed-follow-button:focus-visible {
+  padding-inline: 14px;
   border-color: var(--p-blue);
   color: var(--p-blue);
   background: #f0f4ff;
@@ -1093,4 +1103,5 @@
 @media (prefers-reduced-motion: reduce) {
   .feed-loading span { animation: none; }
   .mock-role-picker label { transition: none; }
+  .feed-card__footer > .feed-follow-button { transition: none; }
 }
