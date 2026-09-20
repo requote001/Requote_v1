@@ -785,6 +785,14 @@
   color: var(--p-blue);
   background: #f5f8ff;
 }
+.feed-card__footer > .feed-small-button,
+.feed-card__footer > button:not(.feed-small-button):not(.feed-follow-button) {
+  font-family: var(--font-ui);
+  font-size: 0.62rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.005em;
+}
 .feed-card__footer > .feed-follow-button {
   min-height: 30px;
   padding: 0 11px;
