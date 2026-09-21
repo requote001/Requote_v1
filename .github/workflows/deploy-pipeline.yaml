@@ -3,29 +3,24 @@ name: CI/CD Pipeline - Dev -> Staging -> Production (Vercel)
 # ============================================================================
 # PIPELINE FLOW (per your request)
 # ============================================================================
-# PUSH TO DEV BRANCH triggers automatically:
-#   1. build-test-dev      -> lint, unit tests, build
-#   2. security-scan-dev   -> SAST, dependency audit, secret scanning
-#   3. deploy-dev          -> auto-deploy to Vercel Dev
+# PUSH TO DEV BRANCH triggers, fully automatic, no manual step:
+#   1. build-test-dev        -> lint, unit tests, build
+#   2. security-scan-dev     -> SAST, dependency audit, secret scanning
+#   3. deploy-dev             -> auto-deploy to Vercel Dev
+#   4. build-test-staging    -> lint, unit tests, build (runs right after dev)
+#   5. security-scan-staging -> SAST, dependency audit, secret scanning
+#   6. deploy-staging         -> auto-deploy to Vercel Staging
 #
-# --- HARD STOP: nothing proceeds to staging until a human approves ---
+# --- HARD STOP: production does NOT run automatically ---
 #
-#   4. staging-gate        -> MANUAL approval required to even start staging
+#   7. production-gate       -> MANUAL approval required (you personally)
+#   8. deploy-production      -> deploy to Vercel Production
 #
-# ONCE APPROVED, staging runs its OWN full validation (not just a redeploy):
-#   5. build-test-staging  -> lint, unit tests, build (fresh pass, for staging)
-#   6. security-scan-staging -> SAST, dependency audit, secret scanning
-#   7. deploy-staging      -> auto-deploy to Vercel Staging
-#
-# --- HARD STOP: nothing proceeds to production until a human approves ---
-#
-#   8. production-gate     -> MANUAL approval required before production
-#   9. deploy-production   -> deploy to Vercel Production
-#
-# Manual gates use GitHub "Environments" with required reviewers configured
-# in repo Settings -> Environments -> (staging-gate / production-gate).
-# Nobody can skip a gate by re-running a job; the workflow run itself
-# pauses and waits in the Actions tab until a reviewer clicks Approve.
+# Dev -> Staging has no gate: a push to develop runs straight through both
+# environments with no human step in between. Production is the only
+# stage that waits for a manual approval, configured in GitHub under
+# Settings -> Environments -> production-gate (add yourself as required
+# reviewer there).
 # ============================================================================
 
 on:
@@ -160,33 +155,12 @@ jobs:
         run: curl -sSf ${{ steps.deploy.outputs.deployment-url }} > /dev/null
 
   # ==========================================================================
-  # HARD STOP: nothing proceeds to staging without manual approval
-  # ==========================================================================
-  # Configure in GitHub: Settings > Environments > staging-gate
-  # Add required reviewers there. The workflow pauses here in the Actions
-  # tab until someone clicks Approve — staging build/test/deploy does not
-  # start until that happens.
-  staging-gate:
-    name: "4. MANUAL GATE - Approve start of Staging"
-    runs-on: ubuntu-latest
-    needs: deploy-dev
-    environment:
-      name: staging-gate
-    steps:
-      - name: Gate checkpoint
-        run: |
-          echo "Approved to begin staging build, test, and deploy."
-          echo "Reviewers should confirm before approving:"
-          echo " - Dev deployment reviewed and working"
-          echo " - No unresolved issues from dev's security scan"
-
-  # ==========================================================================
-  # STAGING STAGE 1: BUILD AND TEST (fresh pass, only runs after the gate)
+  # STAGING STAGE 1: BUILD AND TEST (runs automatically right after dev deploys)
   # ==========================================================================
   build-test-staging:
-    name: "5. Build & Test (Staging)"
+    name: "4. Build & Test (Staging)"
     runs-on: ubuntu-latest
-    needs: staging-gate
+    needs: deploy-dev
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -219,7 +193,7 @@ jobs:
   # STAGING STAGE 2: SECURITY SCAN
   # ==========================================================================
   security-scan-staging:
-    name: "6. Security Scan (Staging)"
+    name: "5. Security Scan (Staging)"
     runs-on: ubuntu-latest
     needs: build-test-staging
     permissions:
@@ -277,7 +251,7 @@ jobs:
   # STAGING STAGE 3: DEPLOY TO STAGING (automatic, once gate is passed)
   # ==========================================================================
   deploy-staging:
-    name: "7. Deploy to Staging"
+    name: "6. Deploy to Staging"
     runs-on: ubuntu-latest
     needs: security-scan-staging
     environment:
@@ -312,7 +286,7 @@ jobs:
   # Recommend requiring 2 reviewers here since this is the last stop before
   # production traffic.
   production-gate:
-    name: "8. MANUAL GATE - Approve Production"
+    name: "7. MANUAL GATE - Approve Production (you)"
     runs-on: ubuntu-latest
     needs: deploy-staging
     environment:
@@ -330,7 +304,7 @@ jobs:
   # STAGE 9: DEPLOY TO PRODUCTION (only after production-gate is approved)
   # ==========================================================================
   deploy-production:
-    name: "9. Deploy to Production"
+    name: "8. Deploy to Production"
     runs-on: ubuntu-latest
     needs: production-gate
     environment:
