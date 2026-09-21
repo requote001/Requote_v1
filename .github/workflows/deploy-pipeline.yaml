@@ -81,8 +81,13 @@ jobs:
       - name: Lint code
         run: npm run lint
 
+      # NOTE: no "-- --coverage" appended here. Your package.json's own
+      # "test" script already runs `vitest run --coverage ...`, so adding
+      # --coverage again on the command line passed it twice, which made
+      # vitest's CLI parser throw "Expected a single value for option
+      # --coverage, received [true, true]". Just call npm test plain.
       - name: Run unit tests
-        run: npm test -- --coverage
+        run: npm test
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
