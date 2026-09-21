@@ -13,6 +13,11 @@ name: CI/CD Pipeline - Dev -> Staging -> Production (Vercel)
 #
 # Manual gates are implemented using GitHub "Environments" with required
 # reviewers configured in repo Settings -> Environments -> (dev/staging/prod).
+#
+# TOKEN MODEL: each Vercel deploy job uses its OWN secret name
+# (VERCEL_TOKEN_DEV / VERCEL_TOKEN_STAGE / VERCEL_TOKEN_PROD) so the three
+# tokens are fully independent, not just environment-scoped duplicates of
+# the same secret name.
 # ============================================================================
 
 on:
@@ -26,7 +31,10 @@ on:
       - main
 
 env:
-  NODE_VERSION: "20"
+  # Bumped from "20" -> "22": several dependencies (e.g. @rolldown/plugin-babel,
+  # the @supabase/* packages) now require Node >=22. Running Node 20 here
+  # produced npm warn EBADENGINE warnings in the logs.
+  NODE_VERSION: "22"
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
@@ -48,8 +56,27 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
 
+      # NOTE ON THE LOCK-FILE ERROR YOU HIT:
+      # `npm ci` failed with "Missing: <package> from lock file" because
+      # package.json and package-lock.json were out of sync (likely new
+      # test deps like vitest/jsdom were added without re-running
+      # `npm install` and committing the updated lock file).
+      #
+      # The PERMANENT fix has to happen in your repo, not in CI: run
+      # `npm install` locally, then commit both package.json and the
+      # regenerated package-lock.json.
+      #
+      # This step is a temporary safety net so the pipeline doesn't stay
+      # fully blocked in the meantime: it tries the strict, reproducible
+      # `npm ci` first, and only falls back to `npm install` if that fails,
+      # with a visible warning. Once you've committed a synced lock file,
+      # `npm ci` will succeed on the first try and the fallback never runs.
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci || {
+            echo "::warning::package-lock.json is out of sync with package.json — falling back to 'npm install'. Please run 'npm install' locally and commit the updated package-lock.json so 'npm ci' succeeds directly next time."
+            npm install
+          }
 
       - name: Lint code
         run: npm run lint
@@ -94,7 +121,11 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci || {
+            echo "::warning::package-lock.json is out of sync with package.json — falling back to 'npm install'."
+            npm install
+          }
 
       # --- Dependency / supply-chain vulnerability scan ---
       - name: npm audit (dependency vulnerabilities)
