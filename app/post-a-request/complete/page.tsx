@@ -11,6 +11,7 @@ type CompletePageProps = {
   searchParams: Promise<{
     id?: string;
     status?: string;
+    source?: string;
   }>;
 };
 
@@ -19,7 +20,12 @@ export default async function RequestCompletePage({
 }: CompletePageProps) {
   const params = await searchParams;
   const isDraft = params.status === "draft";
+  const inAppFlow = params.source === "home";
   const reference = params.id?.slice(0, 8).toUpperCase() ?? "PREVIEW";
+  const createAnotherHref = inAppFlow
+    ? "/post-a-request?journey=request&source=home"
+    : "/post-a-request";
+  const returnHref = inAppFlow ? "/home" : "/";
 
   return (
     <>
@@ -62,11 +68,11 @@ export default async function RequestCompletePage({
             </span>
           </div>
           <div className="completion-card__actions">
-            <Link className="product-primary-button" href="/post-a-request">
+            <Link className="product-primary-button" href={createAnotherHref}>
               Create another request
             </Link>
-            <Link className="product-secondary-button" href="/">
-              Return home
+            <Link className="product-secondary-button" href={returnHref}>
+              {inAppFlow ? "Return to feed" : "Return home"}
             </Link>
           </div>
         </section>

@@ -10,19 +10,24 @@ export const metadata: Metadata = {
 };
 
 type PostRequestPageProps = {
-  searchParams: Promise<{ journey?: string }>;
+  searchParams: Promise<{ journey?: string; source?: string }>;
 };
 
 export default async function PostRequestPage({
   searchParams,
 }: PostRequestPageProps) {
-  const { journey } = await searchParams;
+  const { journey, source } = await searchParams;
+  const inAppFlow = journey === "request" && source === "home";
 
   return (
     <>
       <SiteHeader compact />
       <main className="request-page">
-        <RequestWizard startInRequestFlow={journey === "request"} />
+        <RequestWizard
+          startInRequestFlow={journey === "request"}
+          inAppFlow={inAppFlow}
+          cancelHref={inAppFlow ? "/home" : "/"}
+        />
       </main>
     </>
   );

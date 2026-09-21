@@ -35,13 +35,24 @@ export function MockAuthForm({ mode, nextPath }: MockAuthFormProps) {
   const isRecovery = mode === "recovery";
 
   function authenticate(name: string, address: string, selectedRole: string) {
+    let existing: Record<string, unknown> = {};
+    if (!isSignup) {
+      try {
+        existing = JSON.parse(window.localStorage.getItem("requote_mock_auth") || "{}") as Record<string, unknown>;
+      } catch {
+        // The authentication preview can start with a clean account state.
+      }
+    }
     window.localStorage.setItem(
       "requote_mock_auth",
       JSON.stringify({
+        ...existing,
         authenticated: true,
-        name: name || "Requote member",
+        name: name || existing.name || "Requote member",
         email: address,
-        role: selectedRole,
+        role: selectedRole || existing.role || "Client",
+        profileComplete: isSignup ? false : existing.profileComplete ?? true,
+        emailVerified: isSignup ? false : existing.emailVerified ?? false,
       }),
     );
     window.location.assign(safeNextPath(nextPath));
