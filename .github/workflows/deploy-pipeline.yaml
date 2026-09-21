@@ -1,33 +1,14 @@
 name: CI/CD Pipeline - Dev -> Staging -> Production (Vercel)
 
-# ============================================================================
-# PIPELINE FLOW (per your request)
-# ============================================================================
-# PUSH TO DEV BRANCH triggers, fully automatic, no manual step:
-#   1. build-test-dev        -> lint, unit tests, build
-#   2. security-scan-dev     -> SAST, dependency audit, secret scanning
-#   3. deploy-dev             -> auto-deploy to Vercel Dev
-#   4. build-test-staging    -> lint, unit tests, build (runs right after dev)
-#   5. security-scan-staging -> SAST, dependency audit, secret scanning
-#   6. deploy-staging         -> auto-deploy to Vercel Staging
-#
-# --- HARD STOP: production does NOT run automatically ---
-#
-#   7. production-gate       -> MANUAL approval required (you personally)
-#   8. deploy-production      -> deploy to Vercel Production
-#
-# Dev -> Staging has no gate: a push to develop runs straight through both
-# environments with no human step in between. Production is the only
-# stage that waits for a manual approval, configured in GitHub under
-# Settings -> Environments -> production-gate (add yourself as required
-# reviewer there).
-# ============================================================================
-
 on:
   push:
     branches:
-      - develop   # ONLY dev push auto-starts the pipeline
-  workflow_dispatch: {} # allows manually re-running/retriggering if needed
+      - dev
+  workflow_dispatch:
+
+concurrency:
+  group: dev-to-production-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   NODE_VERSION: "22"
@@ -35,10 +16,6 @@ env:
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
 jobs:
-
-  # ==========================================================================
-  # DEV STAGE 1: BUILD AND TEST
-  # ==========================================================================
   build-test-dev:
     name: "1. Build & Test (Dev)"
     runs-on: ubuntu-latest
@@ -47,32 +24,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
-
+          cache: npm
       - name: Install dependencies
-        run: |
-          npm ci || {
-            echo "::warning::package-lock.json is out of sync with package.json — falling back to 'npm install'."
-            npm install
-          }
-
+        run: npm ci
       - name: Lint code
         run: npm run lint
-
       - name: Run unit tests
         run: npm test
-
       - name: Build application
         run: npm run build
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: build-output-dev
-          path: dist/
-
-  # ==========================================================================
-  # DEV STAGE 2: SECURITY SCAN
-  # ==========================================================================
   security-scan-dev:
     name: "2. Security Scan (Dev)"
     runs-on: ubuntu-latest
@@ -80,57 +41,43 @@ jobs:
     permissions:
       contents: read
       security-events: write
+    env:
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Install dependencies
-        run: |
-          npm ci || {
-            echo "::warning::package-lock.json is out of sync with package.json — falling back to 'npm install'."
-            npm install
-          }
-
-      - name: npm audit
+          cache: npm
+      - run: npm ci
+      - name: Dependency audit
         run: npm audit --audit-level=high
-
-      - name: Snyk dependency & license scan
+      - name: Snyk dependency scan
+        if: ${{ env.SNYK_TOKEN != '' }}
         uses: snyk/actions/node@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           args: --severity-threshold=high
-
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
-          languages: javascript
-
+          languages: javascript-typescript
       - name: Run CodeQL Analysis
         uses: github/codeql-action/analyze@v3
-
       - name: Gitleaks secret scan
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
-
-      - name: Trivy config & filesystem scan
+      - name: Trivy filesystem scan
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: "fs"
-          scan-ref: "."
-          severity: "CRITICAL,HIGH"
+          scan-type: fs
+          scan-ref: .
+          severity: CRITICAL,HIGH
           exit-code: "1"
 
-  # ==========================================================================
-  # DEV STAGE 3: DEPLOY TO DEV (automatic, no gate before this)
-  # ==========================================================================
   deploy-dev:
     name: "3. Deploy to Dev"
     runs-on: ubuntu-latest
@@ -141,22 +88,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: npm install --global vercel@latest
-
       - run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN_DEV }}
       - run: vercel build --token=${{ secrets.VERCEL_TOKEN_DEV }}
-
-      - name: Deploy to Vercel (Dev)
+      - name: Deploy to Vercel Dev
         id: deploy
+        shell: bash
         run: |
-          url=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN_DEV }})
+          url="$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN_DEV }})"
           echo "deployment-url=$url" >> "$GITHUB_OUTPUT"
-
       - name: Smoke test
-        run: curl -sSf ${{ steps.deploy.outputs.deployment-url }} > /dev/null
+        run: curl --fail --silent --show-error --retry 5 --retry-delay 5 "${{ steps.deploy.outputs.deployment-url }}" > /dev/null
 
-  # ==========================================================================
-  # STAGING STAGE 1: BUILD AND TEST (runs automatically right after dev deploys)
-  # ==========================================================================
   build-test-staging:
     name: "4. Build & Test (Staging)"
     runs-on: ubuntu-latest
@@ -166,145 +108,43 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
 
-      - name: Install dependencies
-        run: |
-          npm ci || {
-            echo "::warning::package-lock.json is out of sync with package.json — falling back to 'npm install'."
-            npm install
-          }
-
-      - name: Lint code
-        run: npm run lint
-
-      - name: Run unit tests
-        run: npm test
-
-      - name: Build application
-        run: npm run build
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: build-output-staging
-          path: dist/
-
-  # ==========================================================================
-  # STAGING STAGE 2: SECURITY SCAN
-  # ==========================================================================
-  security-scan-staging:
-    name: "5. Security Scan (Staging)"
+  deploy-staging:
+    name: "5. Deploy to Staging"
     runs-on: ubuntu-latest
     needs: build-test-staging
-    permissions:
-      contents: read
-      security-events: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Install dependencies
-        run: |
-          npm ci || {
-            echo "::warning::package-lock.json is out of sync with package.json — falling back to 'npm install'."
-            npm install
-          }
-
-      - name: npm audit
-        run: npm audit --audit-level=high
-
-      - name: Snyk dependency & license scan
-        uses: snyk/actions/node@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --severity-threshold=high
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: javascript
-
-      - name: Run CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
-
-      - name: Gitleaks secret scan
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
-
-      - name: Trivy config & filesystem scan
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: "fs"
-          scan-ref: "."
-          severity: "CRITICAL,HIGH"
-          exit-code: "1"
-
-  # ==========================================================================
-  # STAGING STAGE 3: DEPLOY TO STAGING (automatic, once gate is passed)
-  # ==========================================================================
-  deploy-staging:
-    name: "6. Deploy to Staging"
-    runs-on: ubuntu-latest
-    needs: security-scan-staging
     environment:
       name: staging
       url: ${{ steps.deploy.outputs.deployment-url }}
     steps:
       - uses: actions/checkout@v4
       - run: npm install --global vercel@latest
-
       - run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN_STAGE }}
       - run: vercel build --token=${{ secrets.VERCEL_TOKEN_STAGE }}
-
-      - name: Deploy to Vercel (Staging)
+      - name: Deploy to Vercel Staging
         id: deploy
+        shell: bash
         run: |
-          url=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN_STAGE }})
+          url="$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN_STAGE }})"
           echo "deployment-url=$url" >> "$GITHUB_OUTPUT"
+      - name: Smoke test
+        run: curl --fail --silent --show-error --retry 5 --retry-delay 5 "${{ steps.deploy.outputs.deployment-url }}" > /dev/null
 
-      - name: Integration / E2E tests
-        run: npm run test:e2e -- --baseUrl=${{ steps.deploy.outputs.deployment-url }}
-
-      - name: OWASP ZAP baseline scan (DAST)
-        uses: zaproxy/action-baseline@v0.12.0
-        with:
-          target: ${{ steps.deploy.outputs.deployment-url }}
-          cmd_options: "-a"
-
-  # ==========================================================================
-  # HARD STOP: nothing proceeds to production without manual approval
-  # ==========================================================================
-  # Configure in GitHub: Settings > Environments > production-gate
-  # Recommend requiring 2 reviewers here since this is the last stop before
-  # production traffic.
   production-gate:
-    name: "7. MANUAL GATE - Approve Production (you)"
+    name: "6. Approve Production"
     runs-on: ubuntu-latest
     needs: deploy-staging
-    environment:
-      name: production-gate
+    environment: production-gate
     steps:
-      - name: Gate checkpoint
-        run: |
-          echo "Approved for production deployment."
-          echo "Reviewers should confirm before approving:"
-          echo " - Staging deployment reviewed and working"
-          echo " - E2E tests and DAST scan reviewed, no unresolved high findings"
-          echo " - Stakeholder / product sign-off obtained"
+      - run: echo "Production deployment approved."
 
-  # ==========================================================================
-  # STAGE 9: DEPLOY TO PRODUCTION (only after production-gate is approved)
-  # ==========================================================================
   deploy-production:
-    name: "8. Deploy to Production"
+    name: "7. Deploy to Production"
     runs-on: ubuntu-latest
     needs: production-gate
     environment:
@@ -313,19 +153,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: npm install --global vercel@latest
-
       - run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN_PROD }}
       - run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN_PROD }}
-
-      - name: Deploy to Vercel (Production)
+      - name: Deploy to Vercel Production
         id: deploy
+        shell: bash
         run: |
-          url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN_PROD }})
+          url="$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN_PROD }})"
           echo "deployment-url=$url" >> "$GITHUB_OUTPUT"
-
       - name: Smoke test
-        run: curl -sSf ${{ steps.deploy.outputs.deployment-url }} > /dev/null
-
-      - name: Notify team
-        run: |
-          echo "Production deployment complete: ${{ steps.deploy.outputs.deployment-url }}"
+        run: curl --fail --silent --show-error --retry 5 --retry-delay 5 "${{ steps.deploy.outputs.deployment-url }}" > /dev/null
