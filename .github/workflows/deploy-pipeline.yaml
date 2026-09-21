@@ -91,10 +91,15 @@ jobs:
         uses: github/codeql-action/analyze@v4
 
       - name: Gitleaks secret scan
-        uses: gitleaks/gitleaks-action@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+        uses: docker://zricethezav/gitleaks:latest
+        with:
+          args: >-
+            detect
+            --source=/github/workspace
+            --verbose
+            --redact
+            --exit-code=1
+            --no-banner
 
       - name: Trivy filesystem scan
         uses: aquasecurity/trivy-action@master
