@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 type MockMember = {
   authenticated?: boolean;
@@ -14,6 +15,11 @@ type MockMember = {
   about?: string;
   isAvailable?: boolean;
   publicProfile?: boolean;
+  professionalFocus?: string;
+  professionalLevel?: string;
+  professionalOverview?: string;
+  emailVerified?: boolean;
+  nameVerified?: boolean;
 };
 
 type ProfileTab = "Overview" | "Work" | "Activity";
@@ -55,6 +61,7 @@ function roleFocus(role: string) {
 }
 
 export function MyProfile() {
+  const searchParams = useSearchParams();
   const [member, setMember] = useState<MockMember | null>(null);
   const [ready, setReady] = useState(false);
   const [activeTab, setActiveTab] = useState<ProfileTab>("Overview");
@@ -62,6 +69,8 @@ export function MyProfile() {
   const [profileComplete, setProfileComplete] = useState(true);
   const [isPublic, setIsPublic] = useState(true);
   const [isAvailable, setIsAvailable] = useState(true);
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [nameVerified, setNameVerified] = useState(false);
   const [notice, setNotice] = useState("");
   const noticeTimer = useRef<number | null>(null);
 
@@ -84,6 +93,8 @@ export function MyProfile() {
         setProfileComplete(parsed.profileComplete ?? true);
         setIsAvailable(parsed.isAvailable ?? true);
         setIsPublic(parsed.publicProfile ?? true);
+        setEmailVerified(parsed.emailVerified ?? false);
+        setNameVerified(searchParams.get("verification") === "verified" || (parsed.nameVerified ?? false));
         setReady(true);
       } catch {
         window.location.replace("/login?next=/profile");
@@ -91,7 +102,7 @@ export function MyProfile() {
     });
 
     return () => window.cancelAnimationFrame(frame);
-  }, []);
+  }, [searchParams]);
 
   useEffect(() => {
     return () => {
@@ -125,7 +136,7 @@ export function MyProfile() {
   const memberName = member.name || "Requote member";
   const focus = roleFocus(role);
   const memberLocation = member.location || "Add your location";
-  const profileIntro = member.about || member.headline || "This is the public context people use to understand how to work with you. You stay in control of what is shared.";
+  const profileIntro = member.professionalOverview || member.about || member.headline || "This is the public context people use to understand how to work with you. You stay in control of what is shared.";
 
   return (
     <div className="my-profile-page">
@@ -156,7 +167,7 @@ export function MyProfile() {
             <div className="my-profile-hero__identity">
               <p>Your Requote profile</p>
               <h1 id="my-profile-title">{memberName}</h1>
-              <div className="my-profile-hero__meta"><span>{member.headline || role}</span><span>{memberLocation}</span><span>{isAvailable ? "Open to relevant opportunities" : "Availability paused"}</span></div>
+              <div className="my-profile-hero__meta"><span>{member.headline || role}</span><span>{memberLocation}</span><span>{isAvailable ? "Open to relevant opportunities" : "Availability paused"}</span>{nameVerified && <strong className="my-profile-verified-badge">✓ Name verified</strong>}</div>
               <p className="my-profile-hero__intro">{profileIntro}</p>
             </div>
             <div className="my-profile-hero__actions">
@@ -192,6 +203,7 @@ export function MyProfile() {
                   <div className="my-profile-panel__heading"><div><p>PROFILE SUMMARY</p><h2>Make the right first impression.</h2></div><button type="button" onClick={() => showNotice("Profile editing will be connected in the next account milestone.")}>Edit</button></div>
                   <p>{profileSummary(role)}</p>
                   <div className="my-profile-chip-list">{focus.map((item) => <span key={item}>{item}</span>)}</div>
+                  {(member.professionalFocus || member.professionalLevel || member.professionalOverview) && <div className="my-profile-professional-context"><div><small>WHAT YOU DO</small><strong>{member.professionalFocus || "Not added yet"}</strong></div><div><small>PROFESSIONAL LEVEL</small><strong>{member.professionalLevel || "Not added yet"}</strong></div>{member.professionalOverview && <p>{member.professionalOverview}</p>}</div>}
                 </section>
 
                 <section className="my-profile-panel">
@@ -227,6 +239,12 @@ export function MyProfile() {
           <aside className="my-profile-sidebar" aria-label="Profile guidance">
             <section className="my-profile-side-card my-profile-side-card--status">
               <p>PROFILE STATUS</p><h2>{profileComplete ? "Ready to share" : "Setup in progress"}</h2><span>{profileComplete ? "Your core details are in place. Add work when it helps people understand your fit." : "Add the essentials so people have enough context to begin the right conversation."}</span><div className="my-profile-progress"><span style={{ width: profileComplete ? "100%" : "42%" }} /></div><small>{profileComplete ? "Core profile complete" : "2 of 4 setup steps"}</small>
+            </section>
+            <section className="my-profile-side-card my-profile-verification-card">
+              <p>VERIFICATION</p>
+              <div className={`my-profile-verification-row ${emailVerified ? "is-verified" : ""}`}><i>{emailVerified ? "✓" : "@"}</i><span><strong>{emailVerified ? "Email confirmed" : "Email confirmation needed"}</strong><small>{emailVerified ? "Your account email is confirmed." : "Complete account setup to confirm this email."}</small></span></div>
+              <div className={`my-profile-verification-row ${nameVerified ? "is-verified" : ""}`}><i>{nameVerified ? "✓" : "○"}</i><span><strong>{nameVerified ? "Name verified" : "Name not verified"}</strong><small>{nameVerified ? "Your profile has a name-verification trust signal." : "Name verification will be available as a separate identity check."}</small></span></div>
+              {!nameVerified && <button type="button" onClick={() => showNotice("Name verification will be available after the identity-check flow is connected.")}>Verify your name <b>→</b></button>}
             </section>
             <section className="my-profile-side-card">
               <p>NEXT STEPS</p><ul>{!profileComplete && <li><Link href="/account-setup?return=/profile">Finish account setup <b>→</b></Link></li>}<li><button type="button" onClick={() => setActiveTab("Work")}>Add a work sample <b>→</b></button></li><li><button type="button" onClick={() => setIsAvailable(true)}>Confirm availability <b>→</b></button></li><li><Link href={requestHref}>Post a clear request <b>→</b></Link></li></ul>
