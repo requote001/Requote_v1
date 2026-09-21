@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { AccountSetup } from "@/components/profile/account-setup";
 
 export const metadata: Metadata = {
@@ -8,5 +9,9 @@ export const metadata: Metadata = {
 };
 
 export default function AccountSetupPage() {
-  return <AccountSetup />;
+  return (
+    <Suspense fallback={null}>
+      <AccountSetup />
+    </Suspense>
+  );
 }
