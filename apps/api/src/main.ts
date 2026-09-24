@@ -1,0 +1,19 @@
+import { ValidationPipe, VersioningType } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
+import { ConfigService } from "@nestjs/config";
+import { AppModule } from "./app.module";
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  const config = app.get(ConfigService);
+  const port = config.get<number>("PORT", 4000);
+
+  app.setGlobalPrefix("api");
+  app.enableVersioning({ type: VersioningType.URI });
+  app.enableCors({ origin: config.get<string>("WEB_ORIGIN", "http://localhost:3000") });
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+
+  await app.listen(port);
+}
+
+void bootstrap();
