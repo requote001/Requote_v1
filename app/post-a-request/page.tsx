@@ -21,7 +21,7 @@ export default async function PostRequestPage({
 
   return (
     <>
-      <SiteHeader compact />
+      <SiteHeader compact workspace={inAppFlow} />
       <main className="request-page">
         <RequestWizard
           startInRequestFlow={journey === "request"}

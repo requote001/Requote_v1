@@ -16,16 +16,16 @@ type AuthShellProps = {
 };
 
 const defaultPanel = {
-  eyebrow: "Protected process",
-  title: "Turn a clear request into a trusted transaction.",
+  eyebrow: "A clearer way to work",
+  title: "Good work starts with a clear connection.",
   description:
-    "Your request, offers, agreement, and delivery evidence stay connected from the first detail to the final confirmation.",
+    "Bring what you need and what you can do into one connected workspace.",
   items: [
-    "Compare offers against one clear brief.",
-    "Keep payment tied to the agreement.",
-    "Use documented evidence if something changes.",
+    "Describe the outcome you need.",
+    "Compare clear, relevant offers.",
+    "Keep the conversation in context.",
   ] as [string, string, string],
-  footer: "Preview experience - No live payment is collected.",
+  footer: "For people finding work, offering expertise, and building teams.",
 };
 
 export function AuthShell({
@@ -36,10 +36,15 @@ export function AuthShell({
   panel = defaultPanel,
 }: AuthShellProps) {
   return (
-    <main className="auth-page">
-      <Link className="auth-page__brand" href="/" aria-label="Requote home">
-        <img src="/requote-logo.png" alt="Requote" />
-      </Link>
+    <main className="auth-page auth-workspace">
+      <div className="auth-workspace__topbar">
+        <Link className="auth-page__brand" href="/" aria-label="Requote home">
+          <img src="/requote-logo.png" alt="Requote" width="126" height="38" />
+        </Link>
+        <Link className="auth-back-to-site" href="/">
+          Back to Requote <span aria-hidden="true">↗</span>
+        </Link>
+      </div>
       <div className="auth-shell">
         <aside className="auth-trust-panel">
           <div>
@@ -49,10 +54,35 @@ export function AuthShell({
             <h2>{panel.title}</h2>
             <p>{panel.description}</p>
           </div>
+          <div
+            className="auth-connection-visual"
+            aria-label="Illustration of a request and a clear offer"
+          >
+            <div className="auth-example-brief">
+              <span className="auth-example-label">THE STARTING POINT</span>
+              <p>“Here’s what I need.”</p>
+              <div>
+                <span>Clear scope</span>
+                <span>Real context</span>
+              </div>
+            </div>
+            <div className="auth-example-connector" aria-hidden="true">
+              <span>↓</span>
+            </div>
+            <div className="auth-example-offer">
+              <img src="/requote-mark.png" alt="" width="32" height="32" />
+              <div>
+                <strong>A clearer next move.</strong>
+                <span>Request. Compare. Requote.</span>
+              </div>
+              <span aria-hidden="true">↗</span>
+            </div>
+            <small>Illustrative product journey</small>
+          </div>
           <ul>
-            {panel.items.map((item, index) => (
+            {panel.items.map((item) => (
               <li key={item}>
-                <span>{String(index + 1).padStart(2, "0")}</span>
+                <span aria-hidden="true">✓</span>
                 {item}
               </li>
             ))}
@@ -66,6 +96,11 @@ export function AuthShell({
             <p>{description}</p>
           </header>
           {children}
+          <p className="auth-preview-disclosure">
+            <span aria-hidden="true" />
+            Design preview · No live authentication, email delivery, or password
+            changes.
+          </p>
         </section>
       </div>
       <footer className="auth-page__footer">

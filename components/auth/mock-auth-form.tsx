@@ -1,248 +1,302 @@
 "use client";
-
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
+import {
+  AUTH_PREVIEW_EMAIL_KEY,
+  AUTH_PREVIEW_KEY,
+  authPreviewHref,
+  safeAuthReturnPath,
+} from "@/lib/auth-preview";
+import { AuthPreviewStates, AuthSubmit, PasswordField } from "./auth-controls";
 
-type AuthMode = "login" | "signup" | "recovery";
-
-type MockAuthFormProps = {
-  mode: AuthMode;
+export function MockAuthForm({
+  mode,
+  nextPath,
+  state = "default",
+}: {
+  mode: "login" | "signup" | "recovery";
   nextPath?: string;
-};
-
-const roles = [
-  ["Client", "Post a request and compare offers."],
-  ["Provider", "Share your expertise and respond to work."],
-  ["Employer", "Build teams around real business needs."],
-  ["Professional", "Find opportunities with a clearer fit."],
-  ["Investor", "Follow and support the work network."],
-] as const;
-
-function safeNextPath(path?: string) {
-  return path?.startsWith("/") && !path.startsWith("//") ? path : "/home";
-}
-
-export function MockAuthForm({ mode, nextPath }: MockAuthFormProps) {
-  const [fullName, setFullName] = useState("");
+  state?: string;
+}) {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("Client");
-  const [showPassword, setShowPassword] = useState(false);
+  const [agreed, setAgreed] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [notice, setNotice] = useState("");
-  const [error, setError] = useState("");
+  const signup = mode === "signup";
+  const recovery = mode === "recovery";
+  const path = recovery
+    ? "/forgot-password"
+    : signup
+      ? "/create-account"
+      : "/login";
+  const target = safeAuthReturnPath(nextPath);
+  const message =
+    notice ||
+    (state === "error"
+      ? "We couldn’t complete that request. Check your details and try again. This is an example error state."
+      : "");
 
-  const isSignup = mode === "signup";
-  const isRecovery = mode === "recovery";
-
-  function authenticate(name: string, address: string, selectedRole: string) {
-    let existing: Record<string, unknown> = {};
-    if (!isSignup) {
-      try {
-        existing = JSON.parse(window.localStorage.getItem("requote_mock_auth") || "{}") as Record<string, unknown>;
-      } catch {
-        // The authentication preview can start with a clean account state.
-      }
-    }
-    window.localStorage.setItem(
-      "requote_mock_auth",
-      JSON.stringify({
-        ...existing,
-        authenticated: true,
-        name: name || existing.name || "Requote member",
-        email: address,
-        role: selectedRole || existing.role || "Client",
-        profileComplete: isSignup ? false : existing.profileComplete ?? true,
-        emailVerified: isSignup ? false : existing.emailVerified ?? false,
-      }),
-    );
-    window.location.assign(safeNextPath(nextPath));
-  }
-
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setError("");
+    if (busy) return;
+    const fields: Record<string, string> = {};
+    if (signup && !name.trim()) fields.name = "Enter your full name.";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
+      fields.email = "Enter a valid email address.";
+    if (!recovery && password.length < (signup ? 8 : 6))
+      fields.password =
+        "Use at least " + (signup ? 8 : 6) + " characters for this preview.";
+    if (signup && !agreed)
+      fields.terms = "Select the agreement to continue the preview.";
+    setErrors(fields);
     setNotice("");
-
-    if (!email.trim()) {
-      setError("Enter an email address to continue.");
+    if (Object.keys(fields).length) {
+      document.getElementById("auth-" + Object.keys(fields)[0])?.focus();
       return;
     }
-
-    if (isRecovery) {
-      setNotice(
-        "In the production flow, a recovery link would be sent to this address.",
+    setBusy(true);
+    // Simulate the pending design state without sending any credentials.
+    await new Promise((resolve) => setTimeout(resolve, 450));
+    try {
+      window.sessionStorage.setItem(AUTH_PREVIEW_EMAIL_KEY, email.trim());
+      if (recovery) {
+        window.location.assign(
+          authPreviewHref("/forgot-password", target, "sent"),
+        );
+        return;
+      }
+      let existing: Record<string, unknown> = {};
+      try {
+        const stored = JSON.parse(
+          window.localStorage.getItem(AUTH_PREVIEW_KEY) || "{}",
+        );
+        if (
+          !signup &&
+          typeof stored.email === "string" &&
+          stored.email.toLowerCase() === email.trim().toLowerCase()
+        )
+          existing = stored;
+      } catch {
+        /* A damaged preview can start with fresh local state. */
+      }
+      window.localStorage.setItem(
+        AUTH_PREVIEW_KEY,
+        JSON.stringify({
+          ...existing,
+          authenticated: true,
+          name: name.trim() || existing.name || "Requote member",
+          email: email.trim(),
+          role: existing.role || "Client",
+          profileComplete: signup ? false : (existing.profileComplete ?? false),
+          emailVerified: signup ? false : (existing.emailVerified ?? false),
+        }),
       );
-      return;
+      window.location.assign(
+        signup ? authPreviewHref("/verify-email", target) : target,
+      );
+    } catch {
+      setNotice(
+        "Your browser couldn’t save this preview. Enable browser storage and try again.",
+      );
+      setBusy(false);
     }
-
-    if (password.length < 6) {
-      setError("Use at least 6 characters for this preview password.");
-      return;
-    }
-
-    authenticate(fullName, email.trim(), role);
-  }
-
-  function continueWith(provider: string) {
-    setError("");
-    authenticate("Requote member", `${provider.toLowerCase()}@example.com`, role);
-  }
-
-  if (notice) {
-    return (
-      <div className="auth-success">
-        <span aria-hidden="true">✓</span>
-        <div>
-          <h2>Check your inbox next.</h2>
-          <p>{notice}</p>
-        </div>
-        <Link className="product-primary-button" href="/login">
-          Return to login
-        </Link>
-      </div>
-    );
   }
 
   return (
     <>
-      {!isRecovery && (
-        <div className="auth-mode-switch" role="tablist" aria-label="Account action">
+      {!recovery && (
+        <nav className="auth-account-switch" aria-label="Account access">
           <Link
-            className={!isSignup ? "is-active" : ""}
-            href={nextPath ? `/login?next=${encodeURIComponent(nextPath)}` : "/login"}
-            role="tab"
-            aria-selected={!isSignup}
+            href={authPreviewHref("/login", nextPath)}
+            aria-current={!signup ? "page" : undefined}
           >
             Log in
           </Link>
           <Link
-            className={isSignup ? "is-active" : ""}
-            href={
-              nextPath
-                ? `/create-account?next=${encodeURIComponent(nextPath)}`
-                : "/create-account"
-            }
-            role="tab"
-            aria-selected={isSignup}
+            href={authPreviewHref("/create-account", nextPath)}
+            aria-current={signup ? "page" : undefined}
           >
             Create account
           </Link>
-        </div>
+        </nav>
       )}
-
-      <form className="auth-form mock-auth-form" onSubmit={handleSubmit}>
-        {isSignup && (
-          <label>
-            Full name
+      <form
+        className="auth-design-form"
+        onSubmit={submit}
+        noValidate
+        aria-label={
+          recovery ? "Password recovery" : signup ? "Create account" : "Log in"
+        }
+      >
+        {signup && (
+          <div className="auth-field">
+            <label htmlFor="auth-name">Full name</label>
             <input
+              id="auth-name"
               autoComplete="name"
-              value={fullName}
-              onChange={(event) => setFullName(event.target.value)}
-              placeholder="Your name"
-              required
+              placeholder="Your full name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              aria-invalid={!!errors.name}
+              aria-describedby={errors.name ? "auth-name-error" : undefined}
             />
-          </label>
+            {errors.name && (
+              <p id="auth-name-error" className="auth-field-error">
+                {errors.name}
+              </p>
+            )}
+          </div>
         )}
-
-        <label>
-          Email address
+        <div className="auth-field">
+          <label htmlFor="auth-email">Email address</label>
           <input
+            id="auth-email"
             type="email"
             autoComplete="email"
+            inputMode="email"
+            placeholder="you@example.com"
             value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="name@company.com"
-            required
+            onChange={(e) => setEmail(e.target.value)}
+            aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? "auth-email-error" : undefined}
           />
-        </label>
-
-        {!isRecovery && (
-          <label>
-            <span className="field-label-row">
-              <span>Password</span>
-              {!isSignup && <Link href="/forgot-password">Forgot password?</Link>}
-            </span>
-            <span className="password-input">
-              <input
-                type={showPassword ? "text" : "password"}
-                autoComplete={isSignup ? "new-password" : "current-password"}
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder="At least 6 characters"
-                required
-              />
+          {errors.email && (
+            <p id="auth-email-error" className="auth-field-error">
+              {errors.email}
+            </p>
+          )}
+        </div>
+        {!recovery && (
+          <PasswordField
+            id="auth-password"
+            value={password}
+            onChange={setPassword}
+            newPassword={signup}
+            error={errors.password}
+            hint={
+              signup
+                ? "At least 8 characters. Use a sample password for this preview."
+                : undefined
+            }
+            recoveryHref={
+              !signup
+                ? authPreviewHref("/forgot-password", nextPath)
+                : undefined
+            }
+          />
+        )}
+        {signup && (
+          <>
+            <p className="auth-role-note">
+              <span aria-hidden="true">↗</span> One account. Choose your roles
+              during setup.
+            </p>
+            <div>
+              <label className="auth-consent">
+                <input
+                  id="auth-terms"
+                  type="checkbox"
+                  checked={agreed}
+                  onChange={(e) => setAgreed(e.target.checked)}
+                  aria-invalid={!!errors.terms}
+                  aria-describedby={
+                    errors.terms ? "auth-terms-error" : undefined
+                  }
+                />
+                <span>
+                  I agree to the <Link href="/terms">Terms of Service</Link> and{" "}
+                  <Link href="/privacy">Privacy Policy</Link>.
+                </span>
+              </label>
+              {errors.terms && (
+                <p className="auth-field-error" id="auth-terms-error">
+                  {errors.terms}
+                </p>
+              )}
+            </div>
+          </>
+        )}
+        {message && (
+          <p className="auth-feedback auth-feedback--error" role="alert">
+            {message}
+          </p>
+        )}
+        <AuthSubmit busy={busy}>
+          {busy
+            ? "Please wait…"
+            : recovery
+              ? "Preview recovery email"
+              : signup
+                ? "Create preview account"
+                : "Log in to preview"}
+        </AuthSubmit>
+        {!recovery && (
+          <>
+            <div className="auth-design-divider">
+              <span>or continue with</span>
+            </div>
+            <div className="auth-provider-buttons">
               <button
                 type="button"
-                className="password-toggle"
-                onClick={() => setShowPassword((visible) => !visible)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
+                onClick={() =>
+                  setNotice(
+                    "Google sign-in will be available when the authentication provider is connected. No account was created.",
+                  )
+                }
               >
-                {showPassword ? "Hide" : "Show"}
+                <span aria-hidden="true" className="auth-google-mark">
+                  G
+                </span>
+                Google
               </button>
-            </span>
-          </label>
-        )}
-
-        {isSignup && (
-          <fieldset className="mock-role-picker">
-            <legend>Start with the path closest to you</legend>
-            <div>
-              {roles.map(([roleName, description]) => (
-                <label className={role === roleName ? "is-selected" : ""} key={roleName}>
-                  <input
-                    type="radio"
-                    name="role"
-                    value={roleName}
-                    checked={role === roleName}
-                    onChange={(event) => setRole(event.target.value)}
-                  />
-                  <span>
-                    <strong>{roleName}</strong>
-                    <small>{description}</small>
-                  </span>
-                </label>
-              ))}
+              <button
+                type="button"
+                onClick={() =>
+                  setNotice(
+                    "LinkedIn sign-in will be available when the authentication provider is connected. No account was created.",
+                  )
+                }
+              >
+                <span aria-hidden="true" className="auth-linkedin-mark">
+                  in
+                </span>
+                LinkedIn
+              </button>
             </div>
-          </fieldset>
-        )}
-
-        {isSignup && (
-          <label className="checkbox-field">
-            <input type="checkbox" required />
-            <span>
-              I agree to the <Link href="/terms">Terms</Link> and <Link href="/privacy">Privacy Policy</Link>.
-            </span>
-          </label>
-        )}
-
-        {error && <p className="form-error" role="alert">{error}</p>}
-
-        <button className="product-primary-button" type="submit">
-          {isRecovery ? "Send recovery link" : isSignup ? "Create account" : "Log in"}
-        </button>
-
-        {!isRecovery && (
-          <>
-            <div className="auth-divider"><span>or continue with</span></div>
-            <div className="mock-social-actions">
-              <button type="button" onClick={() => continueWith("Google")}>Google</button>
-              <button type="button" onClick={() => continueWith("LinkedIn")}>LinkedIn</button>
-            </div>
-            <p className="auth-form__switch">
-              {isSignup ? "Already have an account? " : "Don’t have an account? "}
-              <Link href={isSignup ? "/login" : "/create-account"}>
-                {isSignup ? "Log in" : "Create account"}
+            <p className="auth-secondary-prompt">
+              {signup ? "Already have an account?" : "New to Requote?"}{" "}
+              <Link
+                href={authPreviewHref(
+                  signup ? "/login" : "/create-account",
+                  nextPath,
+                )}
+              >
+                {signup ? "Log in" : "Create an account"}
               </Link>
             </p>
           </>
         )}
-
-        {isRecovery && (
-          <p className="auth-form__switch">
-            Remembered your password? <Link href="/login">Return to login</Link>
-          </p>
+        {recovery && (
+          <Link
+            className="auth-back-link"
+            href={authPreviewHref("/login", nextPath)}
+          >
+            ← Back to log in
+          </Link>
         )}
       </form>
+      <AuthPreviewStates
+        path={path}
+        nextPath={nextPath}
+        active={state}
+        states={[
+          ["default", "Default"],
+          ["error", "Service error"],
+        ]}
+      />
     </>
   );
 }

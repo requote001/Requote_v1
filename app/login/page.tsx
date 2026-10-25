@@ -9,31 +9,32 @@ export const metadata: Metadata = {
 };
 
 type LoginPageProps = {
-  searchParams: Promise<{ next?: string }>;
+  searchParams: Promise<{ next?: string; state?: string }>;
 };
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
-  const { next } = await searchParams;
+  const { next, state } = await searchParams;
 
   return (
     <AuthShell
       eyebrow="Welcome back"
-      title="Pick up where your next move begins."
-      description="Sign in to keep requests, conversations, opportunities, and profile setup in one clear place."
+      title="Good to see you again."
+      description="Log in to your Requote workspace."
       panel={{
         eyebrow: "A clearer work network",
-        title: "Bring the right context to every connection.",
+        title: "Your next connection starts here.",
         description:
-          "Requote is designed to make the next step easier to understand, whether you are hiring, providing, building, or exploring.",
+          "The work you need. The expertise you bring. A better way to bring them together.",
         items: [
-          "Keep your work and opportunities in one workspace.",
-          "Move from a clear brief to a better conversation.",
-          "Build a profile that reflects what you can do.",
+          "Clear requests, with the context that matters.",
+          "Offers you can compare with confidence.",
+          "One profile for the ways you work.",
         ],
-        footer: "Preview experience — authentication is currently mocked.",
+        footer:
+          "Built for people, independent professionals, and growing teams.",
       }}
     >
-      <MockAuthForm mode="login" nextPath={next} />
+      <MockAuthForm mode="login" nextPath={next} state={state} />
     </AuthShell>
   );
 }

@@ -2,9 +2,13 @@ import Link from "next/link";
 
 type SiteHeaderProps = {
   compact?: boolean;
+  workspace?: boolean;
 };
 
-export function SiteHeader({ compact = false }: SiteHeaderProps) {
+export function SiteHeader({
+  compact = false,
+  workspace = false,
+}: SiteHeaderProps) {
   return (
     <header
       className={
@@ -12,24 +16,44 @@ export function SiteHeader({ compact = false }: SiteHeaderProps) {
       }
     >
       <div className="product-shell product-header__inner">
-        <Link className="product-brand" href="/" aria-label="Requote home">
+        <Link
+          className="product-brand"
+          href={workspace ? "/home" : "/"}
+          aria-label="Requote home"
+        >
           <img src="/requote-logo.png" alt="Requote" />
         </Link>
         <nav className="product-nav" aria-label="Product navigation">
-          <Link href="/how-it-works">How it works</Link>
+          {workspace ? (
+            <Link href="/home">Home feed</Link>
+          ) : (
+            <Link href="/how-it-works">How it works</Link>
+          )}
           <Link href="/trust-safety">Trust &amp; safety</Link>
-          <Link href="/terms">Legal</Link>
+          {workspace ? (
+            <Link href="/profile">Your profile</Link>
+          ) : (
+            <Link href="/terms">Legal</Link>
+          )}
         </nav>
         <div className="product-header__actions">
-          <Link className="product-link-button" href="/waitlist">
-            Join early access
-          </Link>
-          <Link
-            className="product-primary-button product-primary-button--small"
-            href="/post-a-request?journey=request&source=product"
-          >
-            Post a request
-          </Link>
+          {workspace ? (
+            <Link className="product-secondary-button" href="/home">
+              Back to feed
+            </Link>
+          ) : (
+            <>
+              <Link className="product-link-button" href="/waitlist">
+                Join early access
+              </Link>
+              <Link
+                className="product-primary-button product-primary-button--small"
+                href="/post-a-request?journey=request&source=product"
+              >
+                Post a request
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>

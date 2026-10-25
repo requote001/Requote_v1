@@ -10,7 +10,19 @@ export const metadata: Metadata = {
 
 export default function AccountSetupPage() {
   return (
-    <Suspense fallback={null}>
+    <Suspense
+      fallback={
+        <main
+          className="account-setup-loading"
+          aria-label="Loading account setup"
+          aria-busy="true"
+        >
+          <span />
+          <span />
+          <span />
+        </main>
+      }
+    >
       <AccountSetup />
     </Suspense>
   );
