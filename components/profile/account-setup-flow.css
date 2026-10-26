@@ -1,0 +1,690 @@
+/* FE-02 retains the established quiet, two-column setup composition. */
+.setup-v2 .account-setup-topbar {
+  min-height: 78px;
+}
+.setup-v2 .account-setup-progress-label {
+  font-size: 12px;
+}
+.setup-v2 .account-setup-progress-label b {
+  font-size: 12px;
+}
+.setup-v2 .account-setup-exit {
+  display: block;
+  border: 0;
+  padding: 10px 0 10px 12px;
+  background: transparent;
+  font: 600 12px var(--font-ui);
+  cursor: pointer;
+}
+.setup-v2 .setup-preview-note {
+  width: min(1180px, calc(100% - 44px));
+  margin: 0 auto;
+  padding: 10px 0 12px;
+  border-bottom: 1px solid #e2e7ef;
+  color: #617087;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.setup-v2 .account-setup-shell {
+  align-items: start;
+  padding-top: 56px;
+  gap: 64px;
+  min-height: calc(100svh - 116px);
+}
+.setup-v2 .account-setup-aside {
+  position: sticky;
+  top: 38px;
+  padding-top: 18px;
+}
+.setup-v2 .account-setup-aside > p,
+.setup-v2 .account-setup-card__heading > p {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+}
+.setup-v2 .account-setup-aside h1 {
+  font-size: clamp(36px, 3.7vw, 48px);
+  line-height: 1.07;
+  letter-spacing: -0.045em;
+}
+.setup-v2 .account-setup-aside > span {
+  font-size: 13px;
+  line-height: 1.8;
+  color: #617087;
+}
+.setup-v2 .account-setup-aside ol {
+  gap: 5px;
+  margin-block: 28px;
+}
+.setup-v2 .account-setup-aside li button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  border: 0;
+  padding: 3px 5px 3px 0;
+  color: inherit;
+  background: transparent;
+  font: 600 12px var(--font-ui);
+  text-align: left;
+  cursor: pointer;
+}
+.setup-v2 .account-setup-aside li {
+  color: #68788f;
+}
+.setup-v2 .account-setup-aside li.is-active {
+  color: #254da6;
+}
+.setup-v2 .account-setup-aside li i {
+  width: 28px;
+  height: 28px;
+  font-size: 10px;
+}
+.setup-v2 .account-setup-aside__note p {
+  font-size: 11px;
+  line-height: 1.8;
+  color: #65758c;
+}
+.setup-v2 .account-setup-card {
+  min-width: 0;
+  padding: 30px;
+  border-radius: 18px;
+  box-shadow: 0 12px 36px #182f5b06;
+}
+.setup-v2 .account-setup-card__heading h2 {
+  font-size: 26px;
+  letter-spacing: -0.035em;
+}
+.setup-v2 .account-setup-card__heading h2:focus {
+  outline: none;
+}
+.setup-v2 .account-setup-card__heading > span {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #65758c;
+}
+.setup-v2 .account-setup-fields {
+  gap: 20px;
+}
+.setup-v2 .setup-field {
+  display: grid;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #33435e;
+}
+.setup-v2 .setup-field > span:first-child {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px;
+}
+.setup-v2 .setup-field small,
+.setup-v2 .setup-photo small {
+  color: #67778e;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.7;
+}
+.setup-v2 .setup-field input,
+.setup-v2 .setup-field select,
+.setup-v2 .setup-field textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 11px 12px;
+  border: 1px solid #d8e0eb;
+  border-radius: 8px;
+  color: #293951;
+  background: #fff;
+  font: 400 12px/1.6 var(--font-ui);
+  outline: none;
+}
+.setup-v2 .setup-field textarea {
+  min-height: 108px;
+  resize: vertical;
+}
+.setup-v2 .setup-field input::placeholder,
+.setup-v2 .setup-field textarea::placeholder {
+  color: #77859a;
+}
+.setup-v2 .setup-field :is(input, select, textarea):focus {
+  border-color: #789be2;
+  box-shadow: 0 0 0 3px #1950d219;
+}
+.setup-v2 .setup-field [aria-invalid="true"] {
+  border-color: #b84b4b;
+}
+.setup-v2 .setup-field-error {
+  color: #a53737;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.6;
+}
+.setup-v2 .setup-field-hint {
+  margin: -6px 0 0;
+  color: #65758c;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.8;
+}
+.setup-v2 .setup-photo {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #edf0f4;
+}
+.setup-v2 .setup-photo-avatar {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  flex: 0 0 72px;
+  overflow: hidden;
+  border: 1px solid #dce5f5;
+  border-radius: 20px;
+  background: #f0f5ff;
+  color: #2a59bc;
+  font: 600 22px var(--font-heading);
+}
+.setup-v2 .setup-photo-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.setup-v2 .setup-photo strong {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 12px;
+}
+.setup-v2 .setup-photo strong small {
+  margin-left: 8px;
+}
+.setup-v2 .setup-photo p {
+  margin: 7px 0 0;
+  color: #65758c;
+  font-size: 10px;
+  line-height: 1.7;
+}
+.setup-v2 .setup-photo-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 6px 12px;
+  overflow: hidden;
+  border: 1px solid #d8e0eb;
+  border-radius: 7px;
+  color: #43546f;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.setup-v2 .setup-photo-button:focus-within {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+.setup-v2 .setup-photo-button input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+.setup-v2 .setup-photo .setup-text-button {
+  margin-left: 6px;
+}
+.setup-v2 .setup-text-button {
+  min-height: 36px;
+  border: 0;
+  padding: 6px 4px;
+  color: #2d58ac;
+  background: transparent;
+  font: 600 11px/1.5 var(--font-ui);
+  text-align: left;
+  cursor: pointer;
+}
+.setup-v2 .setup-text-button:hover {
+  color: #153f96;
+  text-decoration: underline;
+}
+.setup-v2 button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.setup-v2 .account-setup-choice {
+  gap: 12px;
+  padding-block: 16px 0;
+}
+.setup-v2 .account-setup-choice input {
+  width: 17px;
+  height: 17px;
+}
+.setup-v2 .account-setup-choice strong {
+  font-size: 12px;
+}
+.setup-v2 .account-setup-choice small {
+  font-size: 11px;
+  line-height: 1.75;
+  color: #65758c;
+}
+.setup-v2 .setup-role-content {
+  display: grid;
+  gap: 26px;
+  margin-top: 24px;
+}
+.setup-v2 fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.setup-v2 fieldset legend {
+  padding: 0;
+  color: #33435e;
+  font-size: 12px;
+  font-weight: 700;
+}
+.setup-v2 .setup-role-selector > p {
+  margin: 8px 0 14px;
+  color: #65758c;
+  font-size: 11px;
+  line-height: 1.7;
+}
+.setup-v2 .setup-role-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+.setup-v2 .setup-role-grid label {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 14px 12px;
+  border: 1px solid #dfe6ef;
+  border-radius: 9px;
+  background: #fff;
+  cursor: pointer;
+}
+.setup-v2 .setup-role-grid label:hover {
+  border-color: #a9bfea;
+  background: #fafcff;
+}
+.setup-v2 .setup-role-grid .is-selected {
+  border-color: #85a5e4;
+  background: #f6f9ff;
+}
+.setup-v2 .setup-role-grid input {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+  margin: 2px 0 0;
+  accent-color: var(--blue);
+}
+.setup-v2 .setup-role-grid span {
+  display: grid;
+  gap: 5px;
+}
+.setup-v2 .setup-role-grid strong {
+  font-size: 12px;
+  font-weight: 600;
+}
+.setup-v2 .setup-role-grid small {
+  font-size: 10px;
+  color: #65758c;
+  line-height: 1.7;
+}
+.setup-v2 .setup-role-details {
+  padding-top: 20px;
+  border-top: 1px solid #e4eaf2;
+}
+.setup-v2 .setup-role-details legend {
+  float: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  font-size: 14px;
+}
+.setup-v2 .setup-role-details legend small {
+  padding: 3px 8px;
+  border-radius: 5px;
+  color: #365da9;
+  background: #eef3fe;
+  font-size: 9px;
+  font-weight: 500;
+}
+.setup-v2 .setup-role-details .account-setup-fields {
+  clear: both;
+  padding-top: 18px;
+  margin-top: 0;
+}
+.setup-v2 .setup-role-details > p {
+  margin-top: 16px;
+}
+.setup-v2 .setup-alert {
+  margin: 18px 0 0;
+  padding: 12px 14px;
+  border: 1px solid #edcece;
+  border-radius: 8px;
+  color: #8c3434;
+  background: #fffafa;
+  font-size: 11px;
+  line-height: 1.8;
+}
+.setup-v2 .setup-alert ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+}
+.setup-v2 .setup-alert a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.setup-v2 .account-setup-email__status {
+  padding: 18px;
+}
+.setup-v2 .account-setup-email__status small {
+  font-size: 9px;
+}
+.setup-v2 .account-setup-email__status strong {
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.setup-v2 .account-setup-email__status span {
+  font-size: 11px;
+  line-height: 1.7;
+}
+.setup-v2 .setup-email-copy {
+  margin: 0;
+  color: #65758c;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.setup-v2 .setup-email-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.setup-v2 .setup-secondary {
+  min-height: 40px;
+  padding: 8px 13px;
+  border: 1px solid #d7e1ef;
+  border-radius: 7px;
+  color: #425777;
+  background: #fff;
+  font: 600 11px var(--font-ui);
+  cursor: pointer;
+}
+.setup-v2 .setup-secondary:hover {
+  background: #f6f8fc;
+}
+.setup-v2 .setup-deferred {
+  padding: 17px 0 0;
+  border-top: 1px solid #e4eaf2;
+}
+.setup-v2 .setup-deferred strong {
+  font-size: 12px;
+}
+.setup-v2 .setup-deferred p {
+  margin: 7px 0 0;
+  color: #65758c;
+  font-size: 11px;
+  line-height: 1.8;
+}
+.setup-v2 .setup-fixture-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  padding-top: 14px;
+  border-top: 1px dashed #d7e1ef;
+}
+.setup-v2 .setup-fixture-links span {
+  flex-basis: 100%;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: #65758c;
+}
+.setup-v2 .setup-fixture-links a {
+  padding: 7px;
+  color: #526783;
+  font-size: 10px;
+  text-transform: capitalize;
+  text-decoration: none;
+}
+.setup-v2 .setup-fixture-links a[aria-current] {
+  border-radius: 5px;
+  color: #2d58ac;
+  background: #edf3ff;
+}
+.setup-v2 .setup-status {
+  margin: 20px 0 0;
+  padding: 11px 12px;
+  border-radius: 7px;
+  color: #3e5f74;
+  background: #f2f7fa;
+  font-size: 11px;
+  line-height: 1.8;
+}
+.setup-v2 .setup-save-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 25px;
+  padding-top: 16px;
+  border-top: 1px solid #edf0f4;
+}
+.setup-v2 .setup-save-row > span {
+  color: #65758c;
+  font-size: 10px;
+}
+.setup-v2 .account-setup-actions {
+  margin-top: 10px;
+}
+.setup-v2 .account-setup-actions button,
+.setup-v2 .setup-success > button {
+  min-height: 42px;
+  padding: 10px 16px;
+  font: 600 12px var(--font-ui);
+}
+.setup-v2 .setup-review-list {
+  display: grid;
+  gap: 22px;
+  margin-top: 24px;
+}
+.setup-v2 .setup-review-section {
+  padding-bottom: 18px;
+  border-bottom: 1px solid #e6ebf2;
+}
+.setup-v2 .setup-review-section header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.setup-v2 .setup-review-section h3 {
+  margin: 0;
+  color: #293b57;
+  font-size: 13px;
+  font-weight: 600;
+}
+.setup-v2 .setup-review-section dl {
+  display: grid;
+  grid-template-columns: minmax(80px, 0.65fr) minmax(0, 1fr);
+  gap: 9px 16px;
+  margin: 12px 0 0;
+  font-size: 11px;
+  line-height: 1.8;
+}
+.setup-v2 .setup-review-section dt {
+  color: #65758c;
+}
+.setup-v2 .setup-review-section dd {
+  margin: 0;
+  color: #33435e;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.setup-v2 .setup-review-role {
+  margin-top: 16px;
+}
+.setup-v2 .setup-review-role > strong {
+  font-size: 11px;
+  color: #2d58ac;
+  font-weight: 600;
+}
+.setup-v2 .setup-review-role dl > div {
+  display: contents;
+}
+.setup-v2 .setup-success {
+  display: grid;
+  gap: 20px;
+  padding-block: 24px;
+}
+.setup-v2 .setup-success > span {
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  color: #197a55;
+  background: #edf8f1;
+  font-size: 24px;
+}
+.setup-v2 .setup-success h2 {
+  margin: 0;
+  font: 500 30px/1.15 var(--font-heading);
+  letter-spacing: -0.03em;
+}
+.setup-v2 .setup-success p {
+  margin: 0;
+  color: #65758c;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.setup-v2 .setup-success > p:first-of-type {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+.setup-v2 .setup-success > button {
+  justify-self: start;
+  border-radius: 7px;
+  cursor: pointer;
+}
+.setup-v2 .setup-success a {
+  color: #526783;
+  font-size: 12px;
+}
+@media (max-width: 900px) {
+  .setup-v2 .account-setup-shell {
+    gap: 32px;
+    grid-template-columns: 0.7fr minmax(0, 1fr);
+  }
+}
+@media (max-width: 780px) {
+  .setup-v2 .account-setup-shell {
+    grid-template-columns: 1fr;
+    padding-top: 30px;
+    gap: 20px;
+    max-width: 600px;
+  }
+  .setup-v2 .account-setup-aside {
+    position: static;
+    padding-top: 0;
+  }
+  .setup-v2 .account-setup-aside h1 {
+    font-size: 34px;
+  }
+  .setup-v2 .account-setup-aside h1 br {
+    display: none;
+  }
+  .setup-v2 .account-setup-aside > span {
+    font-size: 12px;
+    margin-top: 12px;
+  }
+  .setup-v2 .account-setup-aside ol {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin: 18px 0 0;
+  }
+  .setup-v2 .account-setup-aside li button {
+    width: 100%;
+    min-height: 44px;
+    padding: 5px;
+    border-radius: 8px;
+    background: #edf1f7;
+    justify-content: center;
+  }
+  .setup-v2 .account-setup-aside li.is-active button {
+    background: #e5edff;
+  }
+  .setup-v2 .account-setup-aside li span {
+    display: none;
+  }
+}
+@media (max-width: 560px) {
+  .setup-v2 .account-setup-exit,
+  .setup-v2 .setup-text-button,
+  .setup-v2 .setup-photo-button,
+  .setup-v2 .setup-secondary,
+  .setup-v2 .account-setup-actions button {
+    min-height: 44px;
+  }
+  .setup-v2 .account-setup-topbar {
+    grid-template-columns: auto 1fr auto;
+    width: calc(100% - 32px);
+    gap: 10px;
+    min-height: 68px;
+  }
+  .setup-v2 .account-setup-brand,
+  .setup-v2 .account-setup-brand img {
+    width: 90px;
+  }
+  .setup-v2 .account-setup-progress-label {
+    justify-self: center;
+  }
+  .setup-v2 .account-setup-exit {
+    display: block;
+    font-size: 11px;
+    padding-left: 0;
+  }
+  .setup-v2 .setup-preview-note {
+    width: calc(100% - 32px);
+    font-size: 10px;
+  }
+  .setup-v2 .account-setup-shell {
+    width: calc(100% - 28px);
+    padding-top: 24px;
+  }
+  .setup-v2 .account-setup-card {
+    padding: 22px 18px;
+    border-radius: 14px;
+  }
+  .setup-v2 .account-setup-aside h1 {
+    font-size: 30px;
+  }
+  .setup-v2 .account-setup-card__heading h2 {
+    font-size: 24px;
+  }
+  .setup-v2 .setup-field :is(input, select, textarea) {
+    font-size: 16px;
+  }
+  .setup-v2 .setup-role-grid {
+    grid-template-columns: 1fr;
+  }
+  .setup-v2 .setup-role-grid small {
+    font-size: 11px;
+  }
+  .setup-v2 .setup-review-section dl {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+  .setup-v2 .setup-review-section dd {
+    margin-bottom: 8px;
+  }
+}

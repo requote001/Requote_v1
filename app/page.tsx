@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import LandingPage from "@/src/App";
+import LandingExperience from "@/components/landing/landing-experience";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
 export default function HomePage() {
-  return <LandingPage />;
+  return <LandingExperience />;
 }

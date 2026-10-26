@@ -9,33 +9,33 @@ export const metadata: Metadata = {
 };
 
 type CreateAccountPageProps = {
-  searchParams: Promise<{ next?: string }>;
+  searchParams: Promise<{ next?: string; state?: string }>;
 };
 
 export default async function CreateAccountPage({
   searchParams,
 }: CreateAccountPageProps) {
-  const { next } = await searchParams;
+  const { next, state } = await searchParams;
 
   return (
     <AuthShell
-      eyebrow="Create your workspace"
-      title="Start with the context that matters."
-      description="Create one Requote account and shape it around the work, people, and opportunities you want to move toward."
+      eyebrow="Start something good"
+      title="Make your next move."
+      description="Create an account. Build a profile around you."
       panel={{
         eyebrow: "One account, many paths",
-        title: "Start with one role. Add more when you are ready.",
+        title: "More ways to work. One place to begin.",
         description:
-          "Your first profile choice helps us prepare the right experience. You can refine it later as your work changes.",
+          "Find the right expertise, put your skills to work, or build your next team. There’s room for every part of what you do.",
         items: [
-          "Choose the path closest to your next move.",
-          "Complete the essentials at your own pace.",
-          "Keep requests, offers, and opportunities connected.",
+          "Start with a few simple details.",
+          "Choose one or more roles during setup.",
+          "Build your profile at your own pace.",
         ],
-        footer: "Preview experience — account creation is currently mocked.",
+        footer: "Clients · Providers · Employers · Professionals · Investors",
       }}
     >
-      <MockAuthForm mode="signup" nextPath={next} />
+      <MockAuthForm mode="signup" nextPath={next} state={state} />
     </AuthShell>
   );
 }
