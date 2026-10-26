@@ -7,7 +7,9 @@ import {
   useState,
   type CSSProperties,
   type PointerEvent,
+  type ReactNode,
 } from "react";
+import { HeroDemoGuide } from "./hero-demo-guide";
 import "./landing-experience.css";
 import {
   LandingPeople,
@@ -246,15 +248,18 @@ function ProductDemo({
   example,
   phase,
   onPhaseChange,
+  playbackControl,
 }: {
   example: Example;
   phase: number;
   onPhaseChange?: (phase: number) => void;
+  playbackControl?: ReactNode;
 }) {
   return (
     <div className="rq-demo">
       <div className="rq-demo__top">
         <img src="/requote-logo.png" width="99" height="30" alt="Requote" />
+        {playbackControl}
       </div>
       <div className="rq-demo__steps" aria-label="Example product steps">
         {["Request", "Compare", "Requote"].map((label, index) =>
@@ -264,6 +269,7 @@ function ProductDemo({
               type="button"
               onClick={() => onPhaseChange(index)}
               aria-pressed={phase === index}
+              data-guide-target={index === 0 ? "request" : undefined}
             >
               <span>{index + 1}</span>
               {label}
@@ -379,6 +385,7 @@ function ProductDemo({
       {onPhaseChange && (
         <button
           className="rq-demo__next"
+          data-guide-target="next"
           type="button"
           onClick={() => onPhaseChange(phase === 2 ? 0 : phase + 1)}
         >
@@ -661,11 +668,16 @@ export default function LandingExperience() {
               onPointerLeave={resetScene}
             >
               <div className="rq-scene__card">
-                <ProductDemo
-                  example={examples[0]}
-                  phase={demoPhase}
-                  onPhaseChange={setDemoPhase}
-                />
+                <HeroDemoGuide phase={demoPhase} onPhaseChange={setDemoPhase}>
+                  {(playbackControl) => (
+                    <ProductDemo
+                      example={examples[0]}
+                      phase={demoPhase}
+                      onPhaseChange={setDemoPhase}
+                      playbackControl={playbackControl}
+                    />
+                  )}
+                </HeroDemoGuide>
               </div>
             </div>
           </div>
