@@ -1,0 +1,175 @@
+.rq-guided-demo {
+  position: relative;
+  width: 100%;
+}
+.rq-guide__cursor-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  overflow: hidden;
+  border-radius: 13px;
+  pointer-events: none;
+  user-select: none;
+}
+.rq-landing .rq-guide__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 32px;
+  padding: 6px 8px;
+  border: 1px solid var(--rq-line);
+  border-radius: 7px;
+  color: var(--rq-muted);
+  background: transparent;
+  font: 500 8px var(--font-ui);
+  transition:
+    color 0.15s,
+    border-color 0.15s;
+}
+.rq-landing .rq-guide__toggle:hover {
+  border-color: var(--rq-blue);
+  color: var(--rq-blue);
+}
+.rq-guide-cursor {
+  position: absolute;
+  z-index: 8;
+  top: 0;
+  left: 0;
+  width: 31px;
+  height: 35px;
+  opacity: 0;
+  pointer-events: none;
+  user-select: none;
+  transform: translate3d(0, 0, 0);
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.22, 0.78, 0.25, 1);
+  will-change: transform;
+}
+.rq-guide-cursor__body {
+  display: block;
+  transform-origin: 3px 3px;
+  filter: drop-shadow(1px 3px 3px rgb(7 20 47 / 18%));
+}
+.rq-guided-demo[data-guide-playing="true"]
+  .rq-guide-cursor[data-positioned="true"] {
+  opacity: 1;
+}
+/* Immediate handover, even before React has processed a pointer-enter event. */
+@media (hover: hover) {
+  .rq-guided-demo[data-guide-playing="true"]:hover
+    .rq-guide-cursor[data-positioned="true"] {
+    opacity: 0;
+  }
+}
+.rq-guide-cursor[data-beat="wake"] .rq-guide-cursor__body {
+  animation: rq-guide-wake 0.65s ease-out both;
+}
+.rq-guide-cursor[data-beat="click"] .rq-guide-cursor__body {
+  animation: rq-guide-click 0.2s ease-out both;
+}
+.rq-guide-cursor__ripple {
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--rq-blue);
+  border-radius: 50%;
+  opacity: 0;
+}
+.rq-guide-cursor[data-beat="click"] .rq-guide-cursor__ripple {
+  animation: rq-guide-ripple 0.4s ease-out both;
+}
+.rq-guided-demo[data-guide-beat="click"][data-guide-active-target="next"]
+  .rq-demo__next {
+  background: var(--rq-ink);
+  transform: translateY(1px);
+}
+.rq-guided-demo[data-guide-beat="click"][data-guide-active-target="request"]
+  [data-guide-target="request"] {
+  color: var(--rq-blue);
+}
+@keyframes rq-guide-wake {
+  0% {
+    transform: rotate(-16deg) scale(0.88);
+  }
+  24% {
+    transform: rotate(12deg) scale(1.04);
+  }
+  45% {
+    transform: rotate(-9deg);
+  }
+  65% {
+    transform: rotate(5deg);
+  }
+  82% {
+    transform: rotate(-2deg);
+  }
+  100% {
+    transform: rotate(0) scale(1);
+  }
+}
+@keyframes rq-guide-click {
+  50% {
+    transform: scale(0.84);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes rq-guide-ripple {
+  0% {
+    opacity: 0.55;
+    transform: scale(0.4);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+@media (max-width: 560px) {
+  .rq-landing .rq-guide__toggle {
+    min-height: 40px;
+    padding-inline: 8px;
+    font-size: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rq-guide-cursor {
+    display: none !important;
+  }
+  .rq-guided-demo *,
+  .rq-guided-demo *::before,
+  .rq-guided-demo *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  /* Demo-only autoplay override; page-wide reduced motion remains intact. */
+  .rq-landing
+    .rq-guided-demo[data-guide-motion-override="true"]
+    .rq-guide-cursor {
+    display: block !important;
+    transition-property: transform !important;
+    transition-duration: var(--rq-guide-glide, 0ms) !important;
+    transition-timing-function: cubic-bezier(0.22, 0.78, 0.25, 1) !important;
+  }
+  .rq-landing
+    .rq-guided-demo[data-guide-motion-override="true"]
+    .rq-guide-cursor[data-beat="wake"]
+    .rq-guide-cursor__body {
+    animation: rq-guide-wake 0.65s ease-out both !important;
+  }
+  .rq-landing
+    .rq-guided-demo[data-guide-motion-override="true"]
+    .rq-guide-cursor[data-beat="click"]
+    .rq-guide-cursor__body {
+    animation: rq-guide-click 0.2s ease-out both !important;
+  }
+  .rq-landing
+    .rq-guided-demo[data-guide-motion-override="true"]
+    .rq-guide-cursor[data-beat="click"]
+    .rq-guide-cursor__ripple {
+    animation: rq-guide-ripple 0.4s ease-out both !important;
+  }
+}

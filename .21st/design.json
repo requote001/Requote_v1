@@ -54,19 +54,19 @@
     ],
     "avoid": [
       "Claims of live escrow, verification, database persistence, or provider notification",
-      "Decorative motion that ignores reduced-motion preferences"
+      "Page-wide reduced-motion overrides; the owner-requested hero cursor autoplay exception must remain demo-scoped and pausable"
     ]
   },
   "decisions": [
     "The selected product direction extends the Figma landing page into a trust-first Next.js application using consistent navy, Requote blue, white, and soft-grey surfaces.",
     "The request journey uses five focused steps—basics, details, delivery, budget, and review—with a login handoff only when saving or publishing.",
     "Legal, authentication, request, and confirmation screens share the landing page typography and action hierarchy while remaining explicit product previews where backend services are not connected.",
-    "Motion remains restrained and is disabled when reduced motion is preferred.",
+    "Motion remains restrained and is disabled when reduced motion is preferred, except for the owner-requested, pausable hero cursor demo autoplay.",
     "During early access, login and account creation resolve to one role-aware waitlist experience; request drafts remain local until publishing accounts open.",
-    "The waitlist uses a minimalist white-space layout: a short contextual introduction is paired with a compact early-access form, then collapses cleanly to one column on mobile.",
+    "The waitlist uses an editorial white canvas, existing people-led imagery and a compact bordered form. Role choices remain neutral until selected; optional context is disclosed progressively. On mobile, the long visual story is removed so the form stays close to the introduction. Signup confirmation is server-driven, with isolated labelled fixtures for design QA.",
     "Requote now presents a connected five-path audience model—clients, providers, employers, professionals, and investors—using a restrained network illustration and role-specific early-access handoffs.",
     "The landing page uses a clean editorial white-and-blue direction with oversized Hanken Grotesk headings, people-led editorial imagery, photographic category cards, and navy trust surfaces. Decorative orbit lines, surplus labels, and the lime heading underline have been removed.",
-    "The landing experience pairs a user-controlled illustrative product demo with a native-scroll, sticky Request / Compare / Requote story. Role selection uses neutral controls with blue active states. Reduced-motion preferences disable decorative transforms and reveal animations.",
+    "The landing experience pairs an illustrative product demo with a native-scroll, sticky Request / Compare / Requote story. The hero’s decorative cursor guides the existing stages, disappears for real pointer or keyboard interaction, and wakes with a restrained wiggle before resuming. At the owner's request, a one-time client initialization enables this demo on load for all pointer types and motion preferences; reduced-motion overrides affect only the guide. The Disable motion button has been removed; Escape/touch can still pause reduced-motion autoplay and expose Enable motion afterward. Other visitors retain Pause demo / Play demo. Explicit pause survives visibility and pointer changes, touch interaction pauses playback, and offscreen/background tabs suspend it. No real requests, clicks, audio, or provider actions are generated. Role selection uses neutral controls with blue active states.",
     "The signed-in home keeps a restrained three-column professional feed on desktop, moves supporting content below the feed on tablets, and exposes persistent mobile workspace navigation. Compact card actions share typography and dimensions; example content and unconnected service boundaries are explicit.",
     "People-led landing stories, a conceptual milestone-escrow walkthrough, and expandable development plans add product context. Escrow, verification, AI, and future communications remain explicitly planned, without implying live financial services or customer endorsements."
   ],
