@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { WaitlistForm } from "@/components/waitlist/waitlist-form";
+import "./waitlist.css";
 
 export const metadata: Metadata = {
   title: "Join the waitlist",
@@ -12,91 +13,83 @@ export const metadata: Metadata = {
 
 export default function WaitlistPage() {
   return (
-    <main className="waitlist-minimal">
-      <header className="waitlist-minimal__header">
-        <Link
-          className="waitlist-minimal__brand"
-          href="/"
-          aria-label="Requote home"
-        >
+    <div className="waitlist-page">
+      <header className="waitlist-header">
+        <Link className="waitlist-brand" href="/" aria-label="Requote home">
           <img src="/requote-logo.png" alt="Requote" />
         </Link>
-        <Link className="waitlist-minimal__back" href="/">
-          Back to home
+        <Link className="waitlist-back" href="/">
+          Back to Requote <span aria-hidden="true">↗</span>
         </Link>
       </header>
 
-      <div className="waitlist-minimal__frame">
+      <main className="waitlist-layout" id="waitlist-main">
         <section
-          className="waitlist-minimal__intro"
+          className="waitlist-story"
           aria-labelledby="waitlist-story-title"
         >
-          <p className="waitlist-minimal__eyebrow">Requote early access</p>
-          <h1 id="waitlist-story-title">One network. More ways to move forward.</h1>
-          <p className="waitlist-minimal__lede">
-            Requote brings clients, capable providers, growing teams, ambitious
-            professionals, and investors closer to the work that matters.
+          <p className="waitlist-eyebrow">
+            <span aria-hidden="true" /> A better way to connect
           </p>
-
-          <div className="waitlist-minimal__points">
-            <article>
-              <span aria-hidden="true">01</span>
-              <div>
-                <strong>Clients and providers</strong>
-                <p>Turn a clear need into better work and better offers.</p>
-              </div>
-            </article>
-            <article>
-              <span aria-hidden="true">02</span>
-              <div>
-                <strong>Employers and professionals</strong>
-                <p>Build capable teams and find meaningful opportunities.</p>
-              </div>
-            </article>
-            <article>
-              <span aria-hidden="true">03</span>
-              <div>
-                <strong>Investors and partners</strong>
-                <p>Follow the network shaping the next layer of work.</p>
-              </div>
-            </article>
+          <h1 id="waitlist-story-title">
+            Good work starts with the <em>right people.</em>
+          </h1>
+          <p className="waitlist-lede">
+            Find the expertise you need. Bring your skills to the right work.
+            Build what comes next, together.
+          </p>
+          <figure className="waitlist-people">
+            <img
+              src="/people/collaboration.webp"
+              alt="Professionals bringing their ideas together around a work table"
+              width={780}
+              height={520}
+            />
+            <figcaption>
+              <span aria-hidden="true">↗</span>
+              <span>
+                Different strengths.
+                <br />
+                <strong>Shared possibilities.</strong>
+              </span>
+            </figcaption>
+          </figure>
+          <div className="waitlist-story-note">
+            <span aria-hidden="true">◇</span>
+            <p>
+              For clients, providers, employers, professionals, and investors.
+              <br />
+              <strong>One network. Your own direction.</strong>
+            </p>
           </div>
-
-          <p className="waitlist-minimal__note">
-            We’re opening access carefully, beginning with Nigeria.
-          </p>
         </section>
 
         <section
-          className="waitlist-minimal__form-panel"
+          className="waitlist-panel"
           aria-labelledby="waitlist-form-title"
         >
-          <div className="waitlist-minimal__form-heading">
-            <p className="waitlist-minimal__eyebrow">Join the waitlist</p>
-            <h2 id="waitlist-form-title">Start with the essentials.</h2>
-            <p>
-              No password is needed. We’ll only use your details to prepare
-              your early access.
-            </p>
-          </div>
-
           <Suspense
             fallback={
-              <div className="auth-form-skeleton">Loading waitlist…</div>
+              <div className="waitlist-loading" role="status" aria-busy="true">
+                <span />
+                <span />
+                <span />
+                <p>Preparing your place…</p>
+              </div>
             }
           >
             <WaitlistForm />
           </Suspense>
-
-          <footer className="waitlist-minimal__footer">
-            <span>Requote is designed for more clarity, from the start.</span>
-            <span>
-              <Link href="/privacy">Privacy</Link>
-              <Link href="/terms">Terms</Link>
-            </span>
-          </footer>
         </section>
-      </div>
-    </main>
+      </main>
+      <footer className="waitlist-footer">
+        <span>Built for better connections. Starting in Nigeria.</span>
+        <nav aria-label="Waitlist support and legal">
+          <a href="mailto:info@requote.cc">Get in touch</a>
+          <Link href="/privacy">Privacy</Link>
+          <Link href="/terms">Terms</Link>
+        </nav>
+      </footer>
+    </div>
   );
 }
