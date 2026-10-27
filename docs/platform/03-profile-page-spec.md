@@ -1,7 +1,9 @@
 # Page brief: User profile
 
 Status: draft for product review  
-Route proposal: /profile and /profile/[username]
+Routes: /profile and /profiles/[slug]. Owner-only public preview: /profile?view=public.
+
+Frontend progress: see `16-profile-design-batch.md`. Current persistence and public-view controls are browser-only previews; public/private API integration is still pending.
 
 ## Page story
 

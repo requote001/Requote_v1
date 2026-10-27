@@ -26,6 +26,7 @@ import {
   visibleRoleFields,
   setupRoleLabel,
   readSetupDraft,
+  mergeSavedProfileEdits,
   writeSetupDraft,
   completeLocalSetup,
   avatarFileIssue,
@@ -96,7 +97,7 @@ export function AccountSetup() {
         try {
           const draft = readSetupDraft(localStorage, member.email);
           if (draft) {
-            setForm(draft.form);
+            setForm(mergeSavedProfileEdits(draft, member));
             setStep(draft.step);
             setSavedAt(draft.savedAt);
             setNotice("Your saved setup is ready to continue.");

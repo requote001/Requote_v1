@@ -30,6 +30,8 @@ out
 .tmp-next-package
 tmp/
 *.tsbuildinfo
+coverage/
+test-results/
 
 .env
 

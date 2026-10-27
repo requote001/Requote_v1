@@ -3,34 +3,19 @@
 import Link from "next/link";
 import {
   safeAvatar,
+  normaliseSetup,
   selectedSetupRoles,
   setupRole,
   setupRoleLabel,
 } from "@/lib/account-setup";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-
-type MockMember = {
-  authenticated?: boolean;
-  name?: string;
-  email?: string;
-  role?: string;
-  profileComplete?: boolean;
-  location?: string;
-  headline?: string;
-  about?: string;
-  isAvailable?: boolean;
-  publicProfile?: boolean;
-  professionalFocus?: string;
-  professionalLevel?: string;
-  professionalOverview?: string;
-  emailVerified?: boolean;
-  nameVerified?: boolean;
-  roles?: string[];
-  primaryRole?: string;
-  avatarDataUrl?: string;
-  skills?: string;
-};
+import { PROFILE_KEY, publicProfileView, readLocalProfile, saveLocalPreference, type PreviewProfileMember as MockMember } from "@/lib/profile-preview";
+import { ProfileEditor } from "./profile-editor";
+import { ProfileTabs } from "./profile-tabs";
+import { ProfileRoleSections } from "./profile-role-sections";
+import { PublicProfilePreview } from "./public-profile-preview";
+import "./profile-features.css";
 
 type ProfileTab = "Overview" | "Work" | "Activity";
 
@@ -83,44 +68,45 @@ export function MyProfile() {
   const [activeTab, setActiveTab] = useState<ProfileTab>("Overview");
   const [role, setRole] = useState("Client");
   const [profileComplete, setProfileComplete] = useState(false);
-  const [isPublic, setIsPublic] = useState(true);
-  const [isAvailable, setIsAvailable] = useState(true);
+  const [isPublic, setIsPublic] = useState(false);
+  const [isAvailable, setIsAvailable] = useState(false);
   const [emailVerified, setEmailVerified] = useState(false);
   const [nameVerified, setNameVerified] = useState(false);
   const [notice, setNotice] = useState("");
+  const [loadError, setLoadError] = useState("");
+  const [editing, setEditing] = useState(false);
   const noticeTimer = useRef<number | null>(null);
 
   useEffect(() => {
-    const frame = window.requestAnimationFrame(() => {
-      const stored = window.localStorage.getItem("requote_mock_auth");
-      if (!stored) {
-        window.location.replace("/login?next=/profile");
-        return;
-      }
-
+    const load = () => {
       try {
-        const parsed = JSON.parse(stored) as MockMember;
-        if (!parsed.authenticated) {
+        if (!window.localStorage.getItem(PROFILE_KEY)) {
           window.location.replace("/login?next=/profile");
           return;
         }
+        const parsed = readLocalProfile(window.localStorage);
+        setLoadError("");
         setMember(parsed);
         setRole(parsed.role || "Client");
         setProfileComplete(parsed.profileComplete ?? false);
-        setIsAvailable(parsed.isAvailable ?? true);
-        setIsPublic(parsed.publicProfile ?? true);
+        setIsAvailable(parsed.isAvailable === true);
+        setIsPublic(parsed.publicProfile === true);
         setEmailVerified(parsed.emailVerified ?? false);
         setNameVerified(
-          searchParams.get("verification") === "verified" ||
+          (searchParams.get("preview") === "1" && searchParams.get("verification") === "verified") ||
             (parsed.nameVerified ?? false),
         );
         setReady(true);
-      } catch {
-        window.location.replace("/login?next=/profile");
+      } catch (issue) {
+        setLoadError(issue instanceof Error ? issue.message : "Your local profile could not be loaded.");
       }
-    });
-
-    return () => window.cancelAnimationFrame(frame);
+    };
+    const frame = window.requestAnimationFrame(load);
+    const changed = (event: StorageEvent) => {
+      if (event.key === PROFILE_KEY || event.key === null) load();
+    };
+    window.addEventListener("storage", changed);
+    return () => { window.cancelAnimationFrame(frame); window.removeEventListener("storage", changed); };
   }, [searchParams]);
 
   useEffect(() => {
@@ -141,24 +127,35 @@ export function MyProfile() {
       !selectedSetupRoles(member).map(setupRoleLabel).includes(nextRole)
     )
       return;
-    setRole(nextRole);
-    const stored = window.localStorage.getItem("requote_mock_auth");
-    if (!stored) return;
-
     try {
-      const parsed = JSON.parse(stored) as MockMember;
-      window.localStorage.setItem(
-        "requote_mock_auth",
-        JSON.stringify({
+      const parsed = readLocalProfile(window.localStorage);
+      if (parsed.email !== member?.email) throw new Error("Your preview account changed. Reload before switching roles.");
+      const nextRoleId = setupRole(nextRole);
+      if (!nextRoleId || !selectedSetupRoles(parsed).includes(nextRoleId)) return;
+      const next = {
           ...parsed,
           role: nextRole,
           activeRole: setupRole(nextRole),
-        }),
-      );
-    } catch {
-      // The preview continues in memory if local storage is unavailable.
+        };
+      window.localStorage.setItem(PROFILE_KEY, JSON.stringify(next));
+      setMember(next); setRole(nextRole);
+    } catch (issue) {
+      showNotice(issue instanceof Error ? issue.message : "Your role could not be saved. Try again.");
     }
   }
+
+  function updatePreference(key: "publicProfile" | "isAvailable", value: boolean) {
+    if (!member) return;
+    try {
+      const next = saveLocalPreference(window.localStorage, member, key, value);
+      setMember(next); setIsPublic(next.publicProfile === true); setIsAvailable(next.isAvailable === true);
+      showNotice("Preference saved in this browser preview.");
+    } catch (issue) {
+      showNotice(issue instanceof Error ? issue.message : "Preference could not be saved. Please try again.");
+    }
+  }
+
+  if (loadError) return <div className="my-profile-page"><main className="my-profile-shell"><section className="my-profile-panel profile-unavailable"><h1>We couldn’t load your profile.</h1><p role="alert">{loadError}</p><button type="button" onClick={() => window.location.reload()}>Try again</button><Link href="/login?next=/profile">Back to sign in</Link></section></main></div>;
 
   if (!ready || !member) {
     return (
@@ -171,6 +168,9 @@ export function MyProfile() {
   }
 
   const memberName = member.name || "Requote member";
+  const setup = normaliseSetup(member);
+  const publicView = publicProfileView(setup);
+  if (searchParams.get("view") === "public") return <PublicProfilePreview profile={publicView} />;
   const roleOptions = member.roles?.length
     ? selectedSetupRoles(member).map(setupRoleLabel)
     : [role];
@@ -217,6 +217,7 @@ export function MyProfile() {
       </header>
 
       <main className="my-profile-shell">
+        <div className="profile-preview-banner"><div><strong>Profile workspace · preview</strong><p>Edits and preferences are saved in this browser only. Live profiles and verification are not connected.</p></div><Link href="/profile?view=public">Preview public view ↗</Link></div>
         <div className="my-profile-breadcrumb">
           <Link href="/home">Home</Link>
           <span>/</span>
@@ -268,19 +269,10 @@ export function MyProfile() {
             <div className="my-profile-hero__actions">
               {profileComplete ? (
                 <>
-                  <Link href="/account-setup?return=/profile">
+                  <button type="button" onClick={() => setEditing(true)}>
                     Edit profile
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      showNotice(
-                        "Profile sharing is not connected in this preview.",
-                      )
-                    }
-                  >
-                    Share profile
                   </button>
+                  <Link href="/profile?view=public">Preview public profile</Link>
                 </>
               ) : (
                 <Link href="/account-setup?return=/profile">
@@ -311,26 +303,7 @@ export function MyProfile() {
 
         <div className="my-profile-layout">
           <div className="my-profile-main">
-            <div
-              className="my-profile-tabs"
-              role="tablist"
-              aria-label="Profile content"
-            >
-              {(["Overview", "Work", "Activity"] as ProfileTab[]).map((tab) => (
-                <button
-                  className={activeTab === tab ? "is-active" : ""}
-                  id={`my-profile-tab-${tab.toLowerCase()}`}
-                  key={tab}
-                  type="button"
-                  role="tab"
-                  aria-selected={activeTab === tab}
-                  aria-controls={`my-profile-panel-${tab.toLowerCase()}`}
-                  onClick={() => setActiveTab(tab)}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
+            <ProfileTabs tabs={["Overview", "Work", "Activity"] as const} active={activeTab} onChange={setActiveTab} prefix="my-profile" className="my-profile-tabs" />
 
             {activeTab === "Overview" && (
               <div
@@ -338,6 +311,7 @@ export function MyProfile() {
                 id="my-profile-panel-overview"
                 role="tabpanel"
                 aria-labelledby="my-profile-tab-overview"
+                tabIndex={0}
               >
                 <section className="my-profile-panel">
                   <div className="my-profile-panel__heading">
@@ -345,7 +319,7 @@ export function MyProfile() {
                       <p>PROFILE SUMMARY</p>
                       <h2>Make the right first impression.</h2>
                     </div>
-                    <Link href="/account-setup?return=/profile">Edit</Link>
+                    <button type="button" onClick={() => setEditing(true)}>Edit</button>
                   </div>
                   <p>{profileSummary(role)}</p>
                   <div className="my-profile-chip-list">
@@ -452,7 +426,7 @@ export function MyProfile() {
                         role="switch"
                         aria-checked={isPublic}
                         aria-label="Toggle public profile"
-                        onClick={() => setIsPublic((value) => !value)}
+                        onClick={() => updatePreference("publicProfile", !isPublic)}
                       >
                         <span />
                       </button>
@@ -471,17 +445,18 @@ export function MyProfile() {
                         role="switch"
                         aria-checked={isAvailable}
                         aria-label="Toggle opportunity availability"
-                        onClick={() => setIsAvailable((value) => !value)}
+                        onClick={() => updatePreference("isAvailable", !isAvailable)}
                       >
                         <span />
                       </button>
                     </div>
                   </div>
                   <small className="my-profile-preview-note">
-                    These controls are interactive preview settings. They are
-                    not yet saved to your account.
+                    Saved in this browser only. These are preview preferences,
+                    not server-enforced privacy controls.
                   </small>
                 </section>
+                <ProfileRoleSections profile={publicView || { roles: setup.roles, roleDetails: setup.roleDetails }} />
               </div>
             )}
 
@@ -491,6 +466,7 @@ export function MyProfile() {
                 id="my-profile-panel-work"
                 role="tabpanel"
                 aria-labelledby="my-profile-tab-work"
+                tabIndex={0}
               >
                 <div className="my-profile-empty-icon" aria-hidden="true">
                   ▧
@@ -520,6 +496,7 @@ export function MyProfile() {
                 id="my-profile-panel-activity"
                 role="tabpanel"
                 aria-labelledby="my-profile-tab-activity"
+                tabIndex={0}
               >
                 <div className="my-profile-empty-icon" aria-hidden="true">
                   ◌
@@ -617,7 +594,7 @@ export function MyProfile() {
                   </button>
                 </li>
                 <li>
-                  <button type="button" onClick={() => setIsAvailable(true)}>
+                  <button type="button" onClick={() => updatePreference("isAvailable", true)}>
                     Confirm availability <b>→</b>
                   </button>
                 </li>
@@ -638,6 +615,7 @@ export function MyProfile() {
           </aside>
         </div>
       </main>
+      {editing && <ProfileEditor member={member} onClose={() => setEditing(false)} onSaved={(next) => { setMember(next); setEditing(false); showNotice("Profile changes saved in this browser."); }} />}
       {notice && (
         <div className="my-profile-toast" role="status">
           {notice}

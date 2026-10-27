@@ -112,37 +112,25 @@ const profiles: Record<string, ProfilePlaceholder> = {
   },
 };
 
-function titleFromSlug(slug: string) {
-  return slug
-    .split("-")
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ") || "Requote member";
+// Known discovery fixtures only. Never invent work history for an unknown slug.
+for (const [slug, name, headline] of [
+  ["kelechi-okafor", "Kelechi Okafor", "Electrical contracting"],
+  ["tunde-alabi", "Tunde Alabi", "Catering & logistics"],
+  ["bilikisu-sani", "Bilikisu Sani", "Agriculture & supply"],
+]) {
+  profiles[slug] = {
+    slug, name, initials: name.split(" ").map((part) => part[0]).join(""),
+    profileKind: "Example member profile", headline,
+    location: "Location not shared", availability: "Availability not shared",
+    intro: "An example member from the discovery panel. Further public details have not been added to this fixture.",
+    aboutTitle: "A little more context, when it’s ready.",
+    about: "This sample profile demonstrates the layout, not a real member’s credentials or experience.",
+    services: [], category: headline, serviceArea: "Not shared", preferredWork: "Not shared",
+    workSamples: [], posts: [],
+  };
 }
 
-export function getProfilePlaceholder(slug: string): ProfilePlaceholder {
-  const normalizedSlug = slug.toLowerCase();
-  const known = profiles[normalizedSlug];
-  if (known) return known;
-
-  const name = titleFromSlug(normalizedSlug);
-  const initials = name.split(" ").slice(0, 2).map((part) => part[0]).join("").toUpperCase() || "RM";
-  return {
-    slug: normalizedSlug,
-    name,
-    initials,
-    profileKind: "Profile preview",
-    headline: "Work profile",
-    location: "Location to be added",
-    availability: "Availability not shared",
-    intro: "This reusable Requote profile placeholder will fill with the member’s public details, services, work samples, and posts as those features are connected.",
-    aboutTitle: "Profile details are being prepared.",
-    about: "This placeholder keeps the page structure consistent while public profile information is added to the product.",
-    services: ["Service details to be added", "Work samples to be added"],
-    category: "To be added",
-    serviceArea: "To be added",
-    preferredWork: "To be added",
-    workSamples: sharedWork,
-    posts: [],
-  };
+export function getProfilePlaceholder(slug: string): ProfilePlaceholder | null {
+  const normalized = slug.toLowerCase();
+  return Object.hasOwn(profiles, normalized) ? profiles[normalized] : null;
 }

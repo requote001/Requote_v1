@@ -1,8 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ProfilePlaceholder, ProfileWorkSample } from "@/lib/profile-placeholders";
+import { ProfileDialog } from "./profile-dialog";
+import { ProfileTabs } from "./profile-tabs";
+import "./profile-features.css";
 
 type ProfileTab = "Overview" | "Work" | "Posts";
 
@@ -10,18 +13,22 @@ const requestHref = "/post-a-request?journey=request&source=home";
 
 export function ProviderProfile({ profile }: { profile: ProfilePlaceholder }) {
   const [activeTab, setActiveTab] = useState<ProfileTab>("Overview");
-  const [following, setFollowing] = useState(false);
   const [notice, setNotice] = useState("");
+  const [work, setWork] = useState<ProfileWorkSample | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
 
   function showNotice(message: string) {
     setNotice(message);
-    window.setTimeout(() => setNotice(""), 3200);
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => setNotice(""), 4500);
   }
 
-  function toggleFollow() {
-    const nextValue = !following;
-    setFollowing(nextValue);
-    showNotice(nextValue ? `You are now following ${profile.name}.` : `You unfollowed ${profile.name}.`);
+  async function copyLink() {
+    try {
+      await navigator.clipboard.writeText(new URL(`/profiles/${encodeURIComponent(profile.slug)}`, window.location.origin).href);
+      showNotice("Example profile link copied.");
+    } catch { showNotice("The link could not be copied. You can copy this page’s address from your browser."); }
   }
 
   return (
@@ -44,6 +51,7 @@ export function ProviderProfile({ profile }: { profile: ProfilePlaceholder }) {
       </header>
 
       <main className="provider-profile-shell">
+        <div className="profile-preview-banner"><div><strong>Example profile · product preview</strong><p>Names, projects, and posts here are sample content, not verified member credentials. Follow and messaging are not connected.</p></div><button type="button" onClick={copyLink}>Copy profile link ↗</button></div>
         <nav className="provider-profile-breadcrumb" aria-label="Breadcrumb">
           <Link href="/home">Home</Link><span>/</span><span>{profile.profileKind}</span>
         </nav>
@@ -59,52 +67,49 @@ export function ProviderProfile({ profile }: { profile: ProfilePlaceholder }) {
               <p className="provider-profile-hero__intro">{profile.intro}</p>
             </div>
             <div className="provider-profile-hero__actions">
-              <button className={"provider-profile-follow " + (following ? "is-following" : "")} type="button" aria-pressed={following} onClick={toggleFollow}>{following ? "Following" : "Follow"}</button>
-              <button className="provider-profile-message" type="button" onClick={() => showNotice("Messaging will be available when the communication layer is connected.")}>Message</button>
-              <Link className="provider-profile-request" href={requestHref}>Request a quote</Link>
+              <button className="provider-profile-follow" type="button" aria-disabled="true" onClick={() => showNotice("Following is not available in this preview. No follow request has been sent.")}>Follow</button>
+              <button className="provider-profile-message" type="button" aria-disabled="true" onClick={() => showNotice("Messaging will be available when the communication layer is connected. No message has been sent.")}>Message</button>
+              <Link className="provider-profile-request" href={requestHref}>Post a request</Link>
             </div>
           </div>
         </section>
 
         <div className="provider-profile-layout">
           <section className="provider-profile-main" aria-label={`${profile.name} profile content`}>
-            <div className="provider-profile-tabs" role="tablist" aria-label="Profile content">
-              {(["Overview", "Work", "Posts"] as ProfileTab[]).map((tab) => (
-                <button key={tab} type="button" role="tab" aria-selected={activeTab === tab} className={activeTab === tab ? "is-active" : ""} onClick={() => setActiveTab(tab)}>{tab}</button>
-              ))}
-            </div>
+            <ProfileTabs tabs={["Overview", "Work", "Posts"] as const} active={activeTab} onChange={setActiveTab} prefix="provider-profile" className="provider-profile-tabs" />
 
             {activeTab === "Overview" && (
-              <div className="provider-profile-overview">
+              <div className="provider-profile-overview" id="provider-profile-panel-overview" role="tabpanel" aria-labelledby="provider-profile-tab-overview" tabIndex={0}>
                 <section className="provider-profile-panel">
                   <div className="provider-profile-panel__heading"><p>ABOUT</p><h2>{profile.aboutTitle}</h2></div>
                   <p>{profile.about}</p>
                 </section>
                 <section className="provider-profile-panel">
                   <div className="provider-profile-panel__heading"><p>SERVICES</p><h2>What they work on</h2></div>
-                  <div className="provider-profile-service-list">{profile.services.map((service) => <span key={service}>{service}</span>)}</div>
+                  {profile.services.length ? <div className="provider-profile-service-list">{profile.services.map((service) => <span key={service}>{service}</span>)}</div> : <p>No services shared yet.</p>}
                 </section>
                 <section className="provider-profile-panel">
                   <div className="provider-profile-panel__heading"><p>SELECTED WORK</p><button type="button" onClick={() => setActiveTab("Work")}>See all work →</button></div>
                   <div className="provider-profile-work-grid">
-                    {profile.workSamples.map((sample) => <WorkCard key={sample.title} sample={sample} onView={() => showNotice("Work sample details will open in the next milestone.")} />)}
+                    {profile.workSamples.map((sample) => <WorkCard key={sample.title} sample={sample} onView={() => setWork(sample)} />)}
                   </div>
+                  {!profile.workSamples.length && <p>No public work samples yet.</p>}
                 </section>
               </div>
             )}
 
             {activeTab === "Work" && (
-              <section className="provider-profile-panel provider-profile-panel--work">
+              <section className="provider-profile-panel provider-profile-panel--work" id="provider-profile-panel-work" role="tabpanel" aria-labelledby="provider-profile-tab-work" tabIndex={0}>
                 <div className="provider-profile-panel__heading"><p>WORK SAMPLES</p><h2>Recent project context</h2></div>
                 <div className="provider-profile-work-grid">
-                  {profile.workSamples.map((sample) => <WorkCard key={sample.title} sample={sample} onView={() => showNotice("Work sample details will open in the next milestone.")} />)}
-                  <article className="provider-profile-work-empty"><span>+</span><strong>More work coming soon</strong><p>This preview keeps the portfolio focused while more samples are added.</p></article>
+                  {profile.workSamples.map((sample) => <WorkCard key={sample.title} sample={sample} onView={() => setWork(sample)} />)}
+                  {!profile.workSamples.length && <article className="provider-profile-work-empty"><strong>No public work samples yet</strong><p>Only work this member chooses to publish will appear here.</p></article>}
                 </div>
               </section>
             )}
 
             {activeTab === "Posts" && (
-              <section className="provider-profile-post-list" aria-label={`${profile.name} posts`}>
+              <section className="provider-profile-post-list" id="provider-profile-panel-posts" role="tabpanel" aria-labelledby="provider-profile-tab-posts" tabIndex={0}>
                 {profile.posts.length > 0 ? profile.posts.map((post) => (
                   <article className="provider-profile-post-card" key={post.title}>
                     <header><span className="provider-profile-post-avatar">{profile.initials}</span><div><strong>{profile.name}</strong><small>{post.time} · {post.label}</small></div></header>
@@ -118,7 +123,7 @@ export function ProviderProfile({ profile }: { profile: ProfilePlaceholder }) {
 
           <aside className="provider-profile-sidebar" aria-label="Provider details">
             <section className="provider-profile-side-card">
-              <p>WORKING TOGETHER</p><h2>Start with one clear request.</h2><span>Share scope, location, timing, and the outcome you need. {profile.name} can respond if the work fits.</span><Link href={requestHref}>Create a request →</Link>
+              <p>WORKING TOGETHER</p><h2>Start with one clear request.</h2><span>Share scope, location, timing, and the outcome you need. This preview does not send or notify {profile.name}.</span><Link href={requestHref}>Create a request →</Link>
             </section>
             <section className="provider-profile-side-card">
               <p>PROFILE DETAILS</p><dl><div><dt>Primary category</dt><dd>{profile.category}</dd></div><div><dt>Service area</dt><dd>{profile.serviceArea}</dd></div><div><dt>Preferred work</dt><dd>{profile.preferredWork}</dd></div></dl>
@@ -127,6 +132,7 @@ export function ProviderProfile({ profile }: { profile: ProfilePlaceholder }) {
           </aside>
         </div>
       </main>
+      {work && <ProfileDialog title={work.title} onClose={() => setWork(null)}><div className="profile-work-detail"><p className="profile-work-detail__label">EXAMPLE WORK SAMPLE</p><h3>{work.type}</h3><p>{work.note}</p><p>This illustrates project context only. No completion, review, or identity verification is implied.</p></div></ProfileDialog>}
       {notice && <div className="provider-profile-toast" role="status">{notice}</div>}
     </div>
   );

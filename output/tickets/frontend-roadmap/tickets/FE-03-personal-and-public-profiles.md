@@ -1,6 +1,8 @@
 # FE 03 Personal and Public Profiles
 
-Priority: P0. Owner: frontend engineer. Estimate: 3 to 4 working days. Depends on FE-02 and public/private profile contracts. Status: planned.
+Priority: P0. Owner: frontend engineer. Estimate: 3 to 4 working days. Depends on FE-02 and public/private profile contracts. Status: frontend preview implemented; API integration and acceptance pending.
+
+Implementation record: `docs/platform/16-profile-design-batch.md` (26 October 2026). Local editing, saved preview preferences, a private/public-view adapter, fixture identity resolution, real missing-profile states and keyboard tabs are implemented. This does not mark real authentication, profile APIs, media management or release acceptance complete.
 
 ## User story
 

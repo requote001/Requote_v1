@@ -402,7 +402,8 @@ export function readSetupDraft(
     parsed.version !== 2 ||
     parsed.owner !== ownerId(email) ||
     !parsed.form ||
-    typeof parsed.savedAt !== "string"
+    typeof parsed.savedAt !== "string" ||
+    !Number.isFinite(Date.parse(parsed.savedAt))
   )
     throw new Error(
       "The saved setup draft could not be read. Your account has not been changed.",
@@ -417,6 +418,16 @@ export function readSetupDraft(
         : 0,
     form: normaliseSetup(record(parsed.form)),
   };
+}
+/** Keep more recent profile edits when resuming an older setup/role draft. */
+export function mergeSavedProfileEdits(draft: SetupDraft, member: Record<string, unknown>): SetupForm {
+  const timestamps = record(member.profileFieldEdits);
+  const updates: Record<string, unknown> = {};
+  for (const key of ["name", "headline", "location", "professionalFocus", "professionalOverview", "skills", "publicProfile", "isAvailable"]) {
+    const at = typeof timestamps[key] === "string" ? Date.parse(timestamps[key]) : NaN;
+    if (Number.isFinite(at) && at > Date.parse(draft.savedAt)) updates[key] = member[key];
+  }
+  return normaliseSetup({ ...draft.form, ...updates });
 }
 export function writeSetupDraft(
   storage: SetupStorage,
