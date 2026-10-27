@@ -43,6 +43,10 @@ Build layouts, accessible components, route navigation, validation and tests aga
 
 Use four statuses for tracking: planned, UI ready, API connected and accepted. Record each dependency separately. A backend endpoint listed in a document is not proof that it exists or behaves as specified.
 
+### Latest frontend batch — 26 October 2026
+
+FE-03 profile previews have been extended after the FE-02 account-setup design batch. See `docs/platform/16-profile-design-batch.md` for delivered UI, tests and remaining gates. The batch is **not API connected or accepted**: live authentication/profile services and desktop/mobile visual acceptance remain pending. FE-04 already has a workspace preview, but needs its own integration/readiness check before moving on to FE-05 request creation and FE-06 request browsing/detail. No marketplace or messaging ticket is implicitly marked complete.
+
 ## Contract and route decisions
 
 Use the existing frontend paths `/login`, `/create-account`, `/account-setup`, `/profile`, `/profiles/[slug]`, `/home` and `/post-a-request`. Decide redirects/aliases in FE-00 if the designs say `/sign-up`; avoid duplicate signup implementations.

@@ -8,7 +8,9 @@
     "build": "next build",
     "lint": "eslint .",
     "start": "next start",
-    "test": "vitest run --coverage --reporter=default --reporter=junit --outputFile=./test-results/junit.xml --passWithNoTests"
+    "test": "npm run test:helpers && vitest run --config vitest.profile.config.mjs --coverage --reporter=default --reporter=junit --outputFile=./test-results/junit.xml",
+    "test:helpers": "node --experimental-strip-types --test --test-concurrency=1 lib/*.test.mjs",
+    "test:profile-ui": "vitest run --config vitest.profile.config.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",
